@@ -28,6 +28,9 @@
  *  out of main() to the library.
  */
 
+#ifndef MCT_APPLICATION_APPLICATION_HPP
+#define MCT_APPLICATION_APPLICATION_HPP
+
 #include <moccpp/Config.hpp>
 
 namespace mct
@@ -40,3 +43,5 @@ public:
 };
 
 }
+
+#endif // MCT_APPLICATION_APPLICATION_HPP

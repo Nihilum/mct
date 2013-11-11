@@ -52,4 +52,4 @@ protected:
     void test_run();
 };
 
-#endif MCT_TESTS_APPLICATION_TEST_APPLICATION_HPP
+#endif // MCT_TESTS_APPLICATION_TEST_APPLICATION_HPP

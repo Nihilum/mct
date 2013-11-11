@@ -85,6 +85,15 @@ endif()
 
 set(MCT_SRCS ${CMAKE_SOURCE_DIR}/src/main.cpp)
 
+SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
+SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE) 
+SET(CMAKE_INSTALL_RPATH "\$ORIGIN/lib")
+SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
+
+if(NOT DEFINED WIN32)
+  SET(CMAKE_EXE_LINKER_FLAGS "-Wl,--enable-new-dtags")
+endif()
+
 link_directories(${Boost_LIBRARY_DIRS} ${MOCCPPLIB_LIBRARIES})
 
 include_directories(
@@ -97,6 +106,14 @@ include_directories(
 add_definitions( ${Boost_LIB_DIAGNOSTIC_DEFINITIONS} )
 add_definitions( -DBOOST_ALL_DYN_LINK )
 add_definitions( -DBOOST_FILESYSTEM_NO_DEPRECATED )
+
+if(WIN32)
+  # 
+  set(PROGRAM_COMPILE_FLAGS ${PROGRAM_COMPILE_FLAGS} "")
+else()
+  # Activate C++11 mode for GNU/GCC
+  set(PROGRAM_COMPILE_FLAGS ${PROGRAM_COMPILE_FLAGS} "-std=c++11")
+endif()
 
 add_executable(mct ${MCT_SRCS})
 
@@ -142,3 +159,7 @@ if (DEFINED WIN32)
     install(FILES ${MOCCPPLIB_LIBRARY_INSTALL_PATH} DESTINATION ${CMAKE_INSTALL_PREFIX}/tests)
   endif()
 endif()
+
+set_target_properties(mct PROPERTIES COMPILE_FLAGS
+  "${PROGRAM_COMPILE_FLAGS}"
+)
