@@ -1,0 +1,88 @@
+# The MIT License (MIT)
+#
+# Copyright (c) 2013 Mateusz Kolodziejski
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy of
+# this software and associated documentation files (the "Software"), to deal in
+# the Software without restriction, including without limitation the rights to
+# use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+# the Software, and to permit persons to whom the Software is furnished to do so,
+# subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+# FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+# COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+# IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+set(TEST_NAME mct_test_Configuration)
+set(PERF_NAME mct_perf_Configuration)
+
+set(TEST_SRCS
+  TestConfiguration.hpp
+  TestConfiguration.cpp
+  )
+
+set(PERF_SRCS
+  PerfConfiguration.cpp
+  )
+
+SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
+SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE) 
+SET(CMAKE_INSTALL_RPATH "\$ORIGIN")
+SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
+
+if(NOT DEFINED WIN32)
+  SET(CMAKE_EXE_LINKER_FLAGS "-Wl,--enable-new-dtags")
+endif()
+
+link_directories(${Boost_LIBRARY_DIRS} ${MOCCPPLIB_LIBRARIES})
+
+include_directories(
+  ${CMAKE_BINARY_DIR}
+  ${Boost_INCLUDE_DIRS}
+  ${MOCCPPLIB_INCLUDES}
+  ${CMAKE_SOURCE_DIR}/libs
+  ${CPPUNIT_INCLUDES}
+)
+
+add_definitions( ${Boost_LIB_DIAGNOSTIC_DEFINITIONS} )
+add_definitions( -DBOOST_ALL_DYN_LINK )
+add_definitions( -DBOOST_FILESYSTEM_NO_DEPRECATED )
+
+if(WIN32)
+  # 
+  set(PROGRAM_COMPILE_FLAGS ${PROGRAM_COMPILE_FLAGS} "")
+else()
+  # Activate C++11 mode for GNU/GCC
+  set(PROGRAM_COMPILE_FLAGS ${PROGRAM_COMPILE_FLAGS} "-std=c++11")
+endif()
+
+link_directories(${Boost_LIBRARY_DIRS})
+
+add_executable(${TEST_NAME} ${TEST_SRCS})
+add_executable(${PERF_NAME} ${PERF_SRCS})
+
+
+if(WIN32)
+  target_link_libraries(${TEST_NAME} mctconfig ${MOCCPP_LIB} ${CPPUNIT_LIBRARY})
+  target_link_libraries(${PERF_NAME} mctconfig ${MOCCPP_LIB})
+else()
+  target_link_libraries(${PERF_NAME} mctconfig ${MOCCPP_LIB} boost_timer boost_system boost_program_options)
+  target_link_libraries(${TEST_NAME} mctconfig ${MOCCPP_LIB} ${CPPUNIT_LIBRARY} boost_program_options)
+endif()
+
+install(TARGETS ${TEST_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/tests)
+install(TARGETS ${PERF_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/tests)
+
+set_target_properties(${TEST_NAME} PROPERTIES COMPILE_FLAGS
+  "${PROGRAM_COMPILE_FLAGS}"
+)
+
+set_target_properties(${PERF_NAME} PROPERTIES COMPILE_FLAGS
+  "${PROGRAM_COMPILE_FLAGS}"
+)
