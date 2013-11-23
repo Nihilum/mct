@@ -117,10 +117,18 @@ endif()
 
 add_executable(mct ${MCT_SRCS})
 
-target_link_libraries(mct
-  moccpp
-  ${INTERNAL_LIBS}
-)
+if(WIN32)
+  target_link_libraries(mct
+    moccpp
+    ${INTERNAL_LIBS}
+  )
+else()
+  target_link_libraries(mct
+    moccpp
+    ${INTERNAL_LIBS}
+    boost_program_options
+  )
+endif()
 
 install(TARGETS mct DESTINATION ${CMAKE_INSTALL_PREFIX})
 
@@ -133,7 +141,7 @@ if (DEFINED WIN32)
   #set(MCT_BOOST_LIBS_INUSE ${MCT_BOOST_LIBS_INUSE} "boost_filesystem-.*")
   #set(MCT_BOOST_LIBS_INUSE ${MCT_BOOST_LIBS_INUSE} "boost_log_setup-.*")
   #set(MCT_BOOST_LIBS_INUSE ${MCT_BOOST_LIBS_INUSE} "boost_log-.*")
-  #set(MCT_BOOST_LIBS_INUSE ${MCT_BOOST_LIBS_INUSE} "boost_program_options-.*")
+  set(MCT_BOOST_LIBS_INUSE ${MCT_BOOST_LIBS_INUSE} "boost_program_options-.*")
   #set(MCT_BOOST_LIBS_INUSE ${MCT_BOOST_LIBS_INUSE} "boost_regex-.*")
   set(MCT_BOOST_LIBS_INUSE ${MCT_BOOST_LIBS_INUSE} "boost_system-.*")
   #set(MCT_BOOST_LIBS_INUSE ${MCT_BOOST_LIBS_INUSE} "boost_thread-.*")

@@ -41,6 +41,7 @@
 class TestApplication : public CPPUNIT_NS::TestCase
 {
     CPPUNIT_TEST_SUITE(TestApplication);
+    CPPUNIT_TEST(test_init_configuration_fail);
     CPPUNIT_TEST(test_run);
     CPPUNIT_TEST_SUITE_END();
 
@@ -49,6 +50,7 @@ public:
     void tearDown();
 
 protected:
+	void test_init_configuration_fail();
     void test_run();
 };
 

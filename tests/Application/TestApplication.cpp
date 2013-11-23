@@ -42,13 +42,28 @@ void TestApplication::tearDown()
 {
 }
 
-void TestApplication::test_run()
+void TestApplication::test_init_configuration_fail()
 {
+    std::cout << std::endl;
     const int argc = 1;
     const char* argv[argc] = { "mct" };
+    const bool expected_return_value = false;
+    const std::string expected_message("");
+    std::string str_error;
+    mct::Application app(argc, (char**)argv);
+
+    CPPUNIT_ASSERT_EQUAL(expected_return_value, app.init_configuration(str_error));
+    CPPUNIT_ASSERT_EQUAL(expected_message, str_error);
+}
+
+void TestApplication::test_run()
+{
+    std::cout << std::endl;
+    const int argc = 2;
+    const char* argv[argc] = { "mct", "-c" };
 	const int expected_return_value = 0;
-	mct::Application app;
-	int ret = app.run(argc, (char**)argv);
+	mct::Application app(argc, (char**)argv);
+	int ret = app.run();
 	CPPUNIT_ASSERT_EQUAL(expected_return_value, ret);
 }
 

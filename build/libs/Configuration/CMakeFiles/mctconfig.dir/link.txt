@@ -1,0 +1,1 @@
+/usr/bin/c++  -fPIC -O3 -DNDEBUG   -shared -Wl,-soname,libmctconfig.so -o libmctconfig.so CMakeFiles/mctconfig.dir/Configuration.cpp.o CMakeFiles/mctconfig.dir/ConfigurationBuilder.cpp.o 

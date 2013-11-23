@@ -31,7 +31,11 @@
 #ifndef MCT_APPLICATION_APPLICATION_HPP
 #define MCT_APPLICATION_APPLICATION_HPP
 
+#include <string>
+
 #include <moccpp/Config.hpp>
+
+#include <Configuration/Configuration.hpp>
 
 namespace mct
 {
@@ -39,7 +43,14 @@ namespace mct
 class MOCCPP_DLL_PUBLIC Application
 {
 public:
-	int run(int argc, char** argv);
+	Application(int argc, char** argv);
+
+	bool init_configuration(std::string& msg);
+
+	int run();
+
+protected:
+	Configuration m_config;
 };
 
 }

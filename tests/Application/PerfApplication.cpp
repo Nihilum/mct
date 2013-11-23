@@ -52,6 +52,26 @@ void display_stats(const cpu_timer& timer, const nanosecond_type& expected_time)
     std::cout << timer.format();
 }
 
+void perf_test_init_configuration()
+{
+    nanosecond_type const expected_time(1000000); // 1 millisecond
+    std::cout << "START perf_test_init_configuration()\n";
+
+    const int argc = 1;
+    const char* argv[argc] = { "mct" };
+    mct::Application app(argc, (char**)argv);
+    std::string str_error;
+
+    cpu_timer timer;
+
+    volatile bool test = true;
+    (test == app.init_configuration(str_error)) ? test = true : test = false;
+
+    timer.stop();
+    display_stats(timer, expected_time);
+    std::cout << "END   perf_test_init_configuration()\n" << std::endl;
+}
+
 void perf_test_run()
 {
     nanosecond_type const expected_time(1000000); // 1 millisecond
@@ -63,8 +83,8 @@ void perf_test_run()
     cpu_timer timer;
 
     volatile bool test = false;
-    mct::Application app;
-    int ret_val = app.run(argc, (char**)argv);
+    mct::Application app(argc, (char**)argv);
+    int ret_val = app.run();
     test = (ret_val == 0) ? true : false;
 
     timer.stop();
@@ -74,5 +94,6 @@ void perf_test_run()
 
 int main(int argc, char* argv[])
 {
+    perf_test_init_configuration();
     perf_test_run();
 }

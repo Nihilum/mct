@@ -31,6 +31,6 @@
 
 int main(int argc, char** argv)
 {
-	mct::Application app;
-	return app.run(argc, argv);
+	mct::Application app(argc, argv);
+	return app.run();
 }

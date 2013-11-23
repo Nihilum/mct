@@ -67,12 +67,12 @@ link_directories(${Boost_LIBRARY_DIRS})
 add_executable(${TEST_NAME} ${TEST_SRCS})
 add_executable(${PERF_NAME} ${PERF_SRCS})
 
-target_link_libraries(${TEST_NAME} mctapp ${MOCCPP_LIB} ${CPPUNIT_LIBRARY})
-
 if(WIN32)
-  target_link_libraries(${PERF_NAME} mctapp ${MOCCPP_LIB})
+  target_link_libraries(${PERF_NAME} mctapp mctconfig ${MOCCPP_LIB})
+  target_link_libraries(${TEST_NAME} mctapp mctconfig ${MOCCPP_LIB} ${CPPUNIT_LIBRARY})
 else()
-  target_link_libraries(${PERF_NAME} mctapp ${MOCCPP_LIB} boost_timer boost_system)
+  target_link_libraries(${PERF_NAME} mctapp mctconfig ${MOCCPP_LIB} boost_timer boost_system boost_program_options)
+  target_link_libraries(${TEST_NAME} mctapp mctconfig ${MOCCPP_LIB} ${CPPUNIT_LIBRARY} boost_program_options)
 endif()
 
 install(TARGETS ${TEST_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/tests)

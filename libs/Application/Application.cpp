@@ -28,13 +28,46 @@
  *  out of main() to the library.
  */
 
+#include <iostream>
+
 #include <Application/Application.hpp>
+#include <Configuration/Configuration.hpp>
+#include <Configuration/ConfigurationBuilder.hpp>
 
 namespace mct
 {
 
-int Application::run(int argc, char** argv)
+Application::Application(int argc, char** argv)
+ : m_config(argc, argv)
 {
+}
+
+bool Application::init_configuration(std::string& msg)
+{
+	ConfigurationBuilder config_builder(m_config);
+
+	if (config_builder.build_configuration(msg) == false) {
+		return false;
+	}
+
+	return true;
+}
+
+int Application::run()
+{
+	std::string message_to_user;
+
+	if (init_configuration(message_to_user) == false) {
+		std::cerr << "[Application::run()] init_configuration failed.\nError: " << message_to_user << std::endl;
+		return 1;
+	}
+
+	// The program has been run using either -h, -v or -g options. Display the message that has been prepared in advance and exit.
+	if (m_config.get_app_mode() == "configuration_info_special_mode") {
+		std::cout << message_to_user << std::endl;
+		return 0;
+	}
+
 	return 0;
 }
 
