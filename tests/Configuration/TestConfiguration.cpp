@@ -47,7 +47,7 @@ void TestConfiguration::test_Configuration_ctor()
 {
     const int argc = 1;
     const char* argv[argc] = { "mct" };
-	mct::Configuration config(argc, (char**)argv);
+    mct::Configuration config(argc, (char**)argv);
 
     CPPUNIT_ASSERT_EQUAL(argc, config.get_app_argument_count());
     CPPUNIT_ASSERT_EQUAL(std::string(argv[0]), std::string(config.get_app_argument_array()[0]));

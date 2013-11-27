@@ -55,8 +55,8 @@ add_definitions( -DBOOST_ALL_DYN_LINK )
 add_definitions( -DBOOST_FILESYSTEM_NO_DEPRECATED )
 
 if(WIN32)
-  # 
-  set(PROGRAM_COMPILE_FLAGS ${PROGRAM_COMPILE_FLAGS} "")
+  # Disable dll-external warnings for Visual Studio; [/GS-] disable buffer overflow security checks (optimization) 
+  set(PROGRAM_COMPILE_FLAGS ${PROGRAM_COMPILE_FLAGS} "/wd4251 /GS-")
 else()
   # Activate C++11 mode for GNU/GCC
   set(PROGRAM_COMPILE_FLAGS ${PROGRAM_COMPILE_FLAGS} "-std=c++11")

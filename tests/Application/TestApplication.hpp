@@ -50,7 +50,7 @@ public:
     void tearDown();
 
 protected:
-	void test_init_configuration_fail();
+    void test_init_configuration_fail();
     void test_run();
 };
 

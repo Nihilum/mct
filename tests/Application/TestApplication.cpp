@@ -61,10 +61,10 @@ void TestApplication::test_run()
     std::cout << std::endl;
     const int argc = 2;
     const char* argv[argc] = { "mct", "-c" };
-	const int expected_return_value = 0;
-	mct::Application app(argc, (char**)argv);
-	int ret = app.run();
-	CPPUNIT_ASSERT_EQUAL(expected_return_value, ret);
+    const int expected_return_value = 0;
+    mct::Application app(argc, (char**)argv);
+    int ret = app.run();
+    CPPUNIT_ASSERT_EQUAL(expected_return_value, ret);
 }
 
 CPPUNIT_TEST_SUITE_REGISTRATION(TestApplication);

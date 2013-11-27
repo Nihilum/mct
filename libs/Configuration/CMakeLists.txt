@@ -23,13 +23,15 @@ set(LIBRARY_NAME mctconfig)
 
 if(WIN32)
   # Disable dll-external warnings for Visual Studio; [/GS-] disable buffer overflow security checks (optimization)
-  set(LIBRARY_COMPILE_FLAGS ${LIBRARY_COMPILE_FLAGS} "-DMOCCPP_DLL=1 /wd4251 /wd4275 /GS-")
+  set(LIBRARY_COMPILE_FLAGS ${LIBRARY_COMPILE_FLAGS} "-DMCT_CONFIGURATION_DLL=1 /wd4251 /wd4275 /GS-")
 else()
   # Activate C++11 mode for GNU/GCC
-  set(LIBRARY_COMPILE_FLAGS ${LIBRARY_COMPILE_FLAGS} "-std=c++11 -DMOCCPP_DLL=1")
+  set(LIBRARY_COMPILE_FLAGS ${LIBRARY_COMPILE_FLAGS} "-std=c++11 -DMCT_CONFIGURATION_DLL=1")
 endif()
 
 file(GLOB_RECURSE LIBRARY_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/ ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp)
+
+link_directories(${Boost_LIBRARY_DIRS} ${MOCCPPLIB_LIBRARIES})
 
 include_directories(
   ${CMAKE_BINARY_DIR}
@@ -37,6 +39,9 @@ include_directories(
   ${MOCCPPLIB_INCLUDES}
   ${CMAKE_SOURCE_DIR}/libs
 )
+
+add_definitions( ${Boost_LIB_DIAGNOSTIC_DEFINITIONS} )
+add_definitions( -DBOOST_ALL_DYN_LINK )
 
 add_library(${LIBRARY_NAME} SHARED
   ${LIBRARY_SRCS}

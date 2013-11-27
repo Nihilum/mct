@@ -22,37 +22,41 @@
  */
 
 /**
- * @file Application/Application.hpp
+ * @file Configuration/Config.hpp
  *
- * @desc Class which encapsulates the program, moves the program initialisation responsibility
- *  out of main() to the library.
+ * @desc Macros used to control the library release environment.
  */
 
-#ifndef MCT_APPLICATION_APPLICATION_HPP
-#define MCT_APPLICATION_APPLICATION_HPP
+#ifndef MCT_CONFIGURATION_CONFIG_HPP
+#define MCT_CONFIGURATION_CONFIG_HPP
 
-#include <string>
+/**
+ * Dynamic-link library Import/Export accross different environments.
+ */
 
-#include <Application/Config.hpp>
+#if defined _MSC_VER || defined __CYGWIN__
+  #ifdef MCT_CONFIGURATION_DLL
+    #ifdef __GNUC__
+      #define MCT_CONFIGURATION_DLL_PUBLIC __attribute__ ((dllexport))
+    #else
+      #define MCT_CONFIGURATION_DLL_PUBLIC __declspec(dllexport)
+    #endif
+  #else
+    #ifdef __GNUC__
+      #define MCT_CONFIGURATION_DLL_PUBLIC __attribute__ ((dllimport))
+    #else
+      #define MCT_CONFIGURATION_DLL_PUBLIC __declspec(dllimport)
+    #endif
+  #endif
+  #define MCT_CONFIGURATION_DLL_LOCAL
+#else
+  #if __GNUC__ >= 4
+    #define MCT_CONFIGURATION_DLL_PUBLIC __attribute__ ((visibility ("default")))
+    #define MOCCPP_DLL_LOCAL  __attribute__ ((visibility ("hidden")))
+  #else
+    #define MCT_CONFIGURATION_DLL_PUBLIC
+    #define MCT_CONFIGURATION_DLL_LOCAL
+  #endif
+#endif
 
-#include <Configuration/Configuration.hpp>
-
-namespace mct
-{
-
-class MCT_APPLICATION_DLL_PUBLIC Application
-{
-public:
-    Application(int argc, char** argv);
-
-    bool init_configuration(std::string& msg);
-
-    int run();
-
-protected:
-    Configuration m_config;
-};
-
-}
-
-#endif // MCT_APPLICATION_APPLICATION_HPP
+#endif // MCT_CONFIGURATION_CONFIG_HPP

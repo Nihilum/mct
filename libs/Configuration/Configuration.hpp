@@ -33,37 +33,37 @@
 #include <string>
 #include <cstdint>
 
-#include <moccpp/Config.hpp>
+#include <Configuration/Config.hpp>
 
 namespace mct
 {
 
 class ConfigurationBuilder;
 
-class MOCCPP_DLL_PUBLIC Configuration
+class MCT_CONFIGURATION_DLL_PUBLIC Configuration
 {
-	friend class ConfigurationBuilder;
+    friend class ConfigurationBuilder;
 public:
-	Configuration(int argc, char** argv);
+    Configuration(int argc, char** argv);
 
-	int get_app_argument_count() const { return m_argc; }
-	const char** get_app_argument_array() const { return (const char**)m_argv; }
+    int get_app_argument_count() const { return m_argc; }
+    const char** get_app_argument_array() const { return (const char**)m_argv; }
 
-	std::string get_app_name() const { return m_argv[0]; }
-	std::string get_config_filename() const { return m_config_filename; }
-	std::string get_app_mode() const { return m_mode; }
+    std::string get_app_name() const { return m_argv[0]; }
+    std::string get_config_filename() const { return m_config_filename; }
+    std::string get_app_mode() const { return m_mode; }
 
-	void set_config_filename(const std::string& filename) { m_config_filename = filename; }
-	void set_app_mode(const std::string& mode) { m_mode = mode; }
+    void set_config_filename(const std::string& filename) { m_config_filename = filename; }
+    void set_app_mode(const std::string& mode) { m_mode = mode; }
 
-	static const std::string default_config_filename;
+    static const std::string default_config_filename;
 
 protected:
-	int m_argc;
-	char** m_argv;
+    int m_argc;
+    char** m_argv;
 
-	std::string m_config_filename;
-	std::string m_mode;
+    std::string m_config_filename;
+    std::string m_mode;
 };
 
 }

@@ -44,31 +44,31 @@ Application::Application(int argc, char** argv)
 
 bool Application::init_configuration(std::string& msg)
 {
-	ConfigurationBuilder config_builder(m_config);
+    ConfigurationBuilder config_builder(m_config);
 
-	if (config_builder.build_configuration(msg) == false) {
-		return false;
-	}
+    if (config_builder.build_configuration(msg) == false) {
+        return false;
+    }
 
-	return true;
+    return true;
 }
 
 int Application::run()
 {
-	std::string message_to_user;
+    std::string message_to_user;
 
-	if (init_configuration(message_to_user) == false) {
-		std::cerr << "[Application::run()] init_configuration failed.\nError: " << message_to_user << std::endl;
-		return 1;
-	}
+    if (init_configuration(message_to_user) == false) {
+        std::cerr << "[Application::run()] init_configuration failed.\nError: " << message_to_user << std::endl;
+        return 1;
+    }
 
-	// The program has been run using either -h, -v or -g options. Display the message that has been prepared in advance and exit.
-	if (m_config.get_app_mode() == "configuration_info_special_mode") {
-		std::cout << message_to_user << std::endl;
-		return 0;
-	}
+    // The program has been run using either -h, -v or -g options. Display the message that has been prepared in advance and exit.
+    if (m_config.get_app_mode() == "configuration_info_special_mode") {
+        std::cout << message_to_user << std::endl;
+        return 0;
+    }
 
-	return 0;
+    return 0;
 }
 
 }
