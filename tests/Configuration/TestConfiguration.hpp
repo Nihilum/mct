@@ -45,6 +45,9 @@ class TestConfiguration : public CPPUNIT_NS::TestCase
     CPPUNIT_TEST(test_ConfigurationBuilder_ctor);
     CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_false);
     CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_help);
+    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_version);
+    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_generate);
+    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_show_options);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -56,6 +59,9 @@ protected:
     void test_ConfigurationBuilder_ctor();
     void test_ConfigurationBuilder_build_configuration_false();
     void test_ConfigurationBuilder_build_configuration_help();
+    void test_ConfigurationBuilder_build_configuration_version();
+    void test_ConfigurationBuilder_build_configuration_generate();
+    void test_ConfigurationBuilder_build_configuration_show_options();
 };
 
 #endif // MCT_TESTS_CONFIGURATION_TEST_CONFIGURATION_HPP

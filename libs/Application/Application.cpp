@@ -55,17 +55,22 @@ bool Application::init_configuration(std::string& msg)
 
 int Application::run()
 {
-    std::string message_to_user;
+    // initialize configuration and logger in a separate scope
+    {
+        std::string message_to_user;
 
-    if (init_configuration(message_to_user) == false) {
-        std::cerr << "[Application::run()] init_configuration failed.\nError: " << message_to_user << std::endl;
-        return 1;
-    }
+        if (init_configuration(message_to_user) == false) {
+            std::cerr << "[Application::run()] init_configuration failed.\nError: " << message_to_user << std::endl;
+            return 1;
+        }
 
-    // The program has been run using either -h, -v or -g options. Display the message that has been prepared in advance and exit.
-    if (m_config.get_app_mode() == "configuration_info_special_mode") {
+        // Display standard message or error
         std::cout << message_to_user << std::endl;
-        return 0;
+
+        // The program has been run using either -h, -v or -g options, exit here.
+        if (m_config.get_app_mode() == "configuration_info_special_mode") {
+            return 0;
+        }
     }
 
     return 0;

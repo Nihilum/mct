@@ -104,12 +104,12 @@ void perf_test_ConfigurationBuilder_build_configuration_false()
 
     mct::Configuration config(argc, (char**)argv);
     mct::ConfigurationBuilder config_builder(config);
-    std::string error_msg;
+    std::string message_to_user;
 
     cpu_timer timer;
 
     volatile bool test = false;
-    test = config_builder.build_configuration(error_msg);
+    test = config_builder.build_configuration(message_to_user);
 
     timer.stop();
     display_stats(timer, expected_time);
@@ -126,16 +126,60 @@ void perf_test_ConfigurationBuilder_build_configuration_help()
 
     mct::Configuration config(argc, (char**)argv);
     mct::ConfigurationBuilder config_builder(config);
-    std::string error_msg;
+    std::string message_to_user;
 
     cpu_timer timer;
 
     volatile bool test = false;
-    test = config_builder.build_configuration(error_msg);
+    test = config_builder.build_configuration(message_to_user);
 
     timer.stop();
     display_stats(timer, expected_time);
     std::cout << "END   perf_test_ConfigurationBuilder_build_configuration_help()\n" << std::endl;
+}
+
+void perf_test_ConfigurationBuilder_build_configuration_version()
+{
+    nanosecond_type const expected_time(1000000); // 1 millisecond
+    std::cout << "START perf_test_ConfigurationBuilder_build_configuration_version()\n";
+
+    const int argc = 2;
+    const char* argv[argc] = { "mct", "-v" };
+
+    mct::Configuration config(argc, (char**)argv);
+    mct::ConfigurationBuilder config_builder(config);
+    std::string message_to_user;
+
+    cpu_timer timer;
+
+    volatile bool test = false;
+    test = config_builder.build_configuration(message_to_user);
+
+    timer.stop();
+    display_stats(timer, expected_time);
+    std::cout << "END   perf_test_ConfigurationBuilder_build_configuration_version()\n" << std::endl;
+}
+
+void perf_test_ConfigurationBuilder_build_configuration_generate()
+{
+    nanosecond_type const expected_time(1000000); // 1 millisecond
+    std::cout << "START perf_test_ConfigurationBuilder_build_configuration_generate()\n";
+
+    const int argc = 2;
+    const char* argv[argc] = { "mct", "-g" };
+
+    mct::Configuration config(argc, (char**)argv);
+    mct::ConfigurationBuilder config_builder(config);
+    std::string message_to_user;
+
+    cpu_timer timer;
+
+    volatile bool test = false;
+    test = config_builder.build_configuration(message_to_user);
+
+    timer.stop();
+    display_stats(timer, expected_time);
+    std::cout << "END   perf_test_ConfigurationBuilder_build_configuration_generate()\n" << std::endl;
 }
 
 int main(int argc, char* argv[])
@@ -144,4 +188,6 @@ int main(int argc, char* argv[])
     perf_test_ConfigurationBuilder_ctor();
     perf_test_ConfigurationBuilder_build_configuration_false();
     perf_test_ConfigurationBuilder_build_configuration_help();
+    perf_test_ConfigurationBuilder_build_configuration_version();
+    perf_test_ConfigurationBuilder_build_configuration_generate();
 }

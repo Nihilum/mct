@@ -24,7 +24,7 @@
 /**
  * @file Configuration/Configuration.hpp
  *
- * @desc Program options are kept here - as well as parsing the configuration file.
+ * @desc Program options are kept here.
  */
 
 #ifndef MCT_CONFIGURATION_CONFIGURATION_HPP
@@ -45,13 +45,14 @@ class MCT_CONFIGURATION_DLL_PUBLIC Configuration
     friend class ConfigurationBuilder;
 public:
     Configuration(int argc, char** argv);
+    ~Configuration();
 
     int get_app_argument_count() const { return m_argc; }
     const char** get_app_argument_array() const { return (const char**)m_argv; }
 
-    std::string get_app_name() const { return m_argv[0]; }
-    std::string get_config_filename() const { return m_config_filename; }
-    std::string get_app_mode() const { return m_mode; }
+    const std::string get_app_name() const { return m_argv[0]; }
+    const std::string& get_config_filename() const { return m_config_filename; }
+    const std::string& get_app_mode() const { return m_mode; }
 
     void set_config_filename(const std::string& filename) { m_config_filename = filename; }
     void set_app_mode(const std::string& mode) { m_mode = mode; }

@@ -88,9 +88,18 @@ protected:
             po::options_description& po_cmdline, po::options_description& po_config, po::variables_map& vm
         ) const;
 
+    bool load_cfgfile(
+            std::string& msg,
+            po::options_description& config_file_options, po::variables_map& vm
+        ) const;
+
     void build_help_message(std::string& msg, po::options_description& po_cmdline) const;
     void build_version_message(std::string& msg) const;
     void build_generate_message(std::string& msg, po::options_description& po_config) const;
+    bool build_show_options_message(
+            std::string& msg,
+            po::variables_map& vm, po::options_description& po_hidden, po::options_description& po_cmdline, po::options_description& po_config
+        ) const;
 
 protected:
     Configuration& m_config;

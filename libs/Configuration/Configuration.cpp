@@ -24,7 +24,7 @@
 /**
  * @file Configuration/Configuration.cpp
  *
- * @desc Program options are kept here - as well as parsing the configuration file.
+ * @desc Program options are kept here.
  */
 
 #include <Configuration/Configuration.hpp>
@@ -37,6 +37,12 @@ const std::string Configuration::default_config_filename = "mct.cfg";
 Configuration::Configuration(int argc, char** argv)
  : m_argc(argc), m_argv(argv)
 {
+}
+
+Configuration::~Configuration()
+{
+	m_argc = 0;
+	m_argv = nullptr;
 }
 
 }

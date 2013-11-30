@@ -27,12 +27,15 @@
  * @desc Class used to parse the configuration file into Configuration class.
  */
 
+#include <fstream>
 #include <sstream>
+#include <algorithm>
 
 #include <boost/program_options.hpp>
 
 #include <Configuration/Configuration.hpp>
 #include <Configuration/ConfigurationBuilder.hpp>
+#include <Configuration/ConfigurationFileGenerator.hpp>
 
 #include <config.hpp>
 
@@ -70,14 +73,23 @@ bool ConfigurationBuilder::build_configuration(std::string& msg)
         return false;
     }
 
+    if (vm.count("show_options") == 1) {
+        if (build_show_options_message(msg, vm, po_hidden, po_cmdline, po_config) == false) {
+            return false;
+        }
+    }
+
     // If this method returns true, then the program is running in special info mode; change mode and return true
     if (handle_configuration_info_special_mode(msg, po_cmdline, po_config, vm) == true) {
         m_config.set_app_mode("configuration_info_special_mode");
         return true;
     }
 
-    msg = std::string("Could not find '") + m_config.get_config_filename() + std::string("' file");
-    return false;
+    if (load_cfgfile(msg, config_file_options, vm) == false) {
+        return false;
+    }
+
+    return true;
 }
 
 bool ConfigurationBuilder::setup_config_fields(
@@ -157,6 +169,28 @@ bool ConfigurationBuilder::handle_configuration_info_special_mode(
     return false;
 }
 
+bool ConfigurationBuilder::load_cfgfile(
+        std::string& msg,
+        po::options_description& config_file_options, po::variables_map& vm
+) const
+{
+    std::fstream fs(m_config.get_config_filename().c_str());
+    if (!fs) {
+        msg = std::string("Could not open '") + m_config.get_config_filename() + std::string("' file");
+        return false;
+    }
+
+    try {
+        store(parse_config_file(fs, config_file_options), vm);
+        notify(vm);
+    } catch (const std::exception& e) {
+        msg = e.what();
+        return false;
+    }
+
+    return true;
+}
+
 void ConfigurationBuilder::build_help_message(std::string& msg, po::options_description& po_cmdline) const
 {
     std::stringstream help_sstr;
@@ -173,12 +207,12 @@ void ConfigurationBuilder::build_help_message(std::string& msg, po::options_desc
         help_sstr << opt->format_name() << " - " << opt->description() << std::endl;
     });
 
-    msg = std::move(help_sstr.str());
+    msg += std::move(help_sstr.str());
 }
 
 void ConfigurationBuilder::build_version_message(std::string& msg) const
 {
-    msg = std::string("Mattsource's Connection Tunneler v. ") + std::string(MCT_VERSION);
+    msg += std::string("Mattsource's Connection Tunneler v. ") + std::string(MCT_VERSION);
 
     if (!std::string(MCT_TAG).empty()) 
         msg += std::string("-") + std::string(MCT_TAG);
@@ -186,6 +220,96 @@ void ConfigurationBuilder::build_version_message(std::string& msg) const
 
 void ConfigurationBuilder::build_generate_message(std::string& msg, po::options_description& po_config) const
 {
+    ConfigurationFileGenerator gen;
+
+    std::for_each(po_config.options().begin(), po_config.options().end(), [&](const boost::shared_ptr<po::option_description>& opt){
+        gen.add_entry(ConfigurationEntry(
+            opt->long_name(),
+            std::string("# ") + opt->description(),
+            (opt->format_parameter().length() < 7) ? "" :
+            opt->format_parameter().substr(6, opt->format_parameter().length() - 7)
+        ));
+    });
+
+    msg += gen.generate();
+}
+
+/**
+ * Since Boost.Program_Options stores variables in a variable map using boost::any,
+ * we need a way to convert them back into std::string - so they can be easily displayed.
+ * These 2 classes, type_comparison_helper and auto_value_cast_helper are just helpers,
+ * that allow extracting variable values during variables map iteration.
+ */
+class type_comparison_helper
+{
+public:
+    bool operator()(const std::type_info* lhs, const std::type_info* rhs) const 
+    { 
+        return lhs->before(*rhs); 
+    } 
+}; 
+
+template < typename T > 
+class auto_value_cast_helper
+{
+public: 
+    std::string operator() (const po::variable_value& v) const
+    {
+        std::stringstream convert_sstr;
+        convert_sstr << v.as<T>(); 
+        return convert_sstr.str(); 
+    } 
+};
+
+bool ConfigurationBuilder::build_show_options_message(
+        std::string& msg,
+        po::variables_map& vm, po::options_description& po_hidden, po::options_description& po_cmdline, po::options_description& po_config
+) const
+{
+    std::stringstream composed_sstr;
+
+    // All variable types used in ConfigurationBuilder setup_config_fields must be listed here.
+    std::map< const std::type_info*, boost::function< std::string (const po::variable_value&) >, type_comparison_helper> conversion_map; 
+    conversion_map[ & typeid( std::string ) ] = auto_value_cast_helper< ::std::string >() ; 
+    conversion_map[ & typeid( bool ) ] = auto_value_cast_helper< bool >() ; 
+    conversion_map[ & typeid( uint16_t ) ] = auto_value_cast_helper< uint16_t >() ; 
+    conversion_map[ & typeid( uint64_t ) ] = auto_value_cast_helper< uint64_t >() ;
+
+    composed_sstr << "Program options and their current settings composed of cmdline and cfgfile:" << std::endl << std::endl;
+
+    auto composing_helper = [&](const boost::shared_ptr<po::option_description>& opt) {
+        composed_sstr << opt->format_name() << ": ";
+
+        if (opt->format_parameter().empty()) {
+            if (vm.count(opt->long_name()) == 1) {
+                composed_sstr << "ON";
+            } else {
+                composed_sstr << "OFF";
+            }
+        } else {
+            const po::variable_value& val = vm[opt->long_name()];
+            try {
+                composed_sstr << conversion_map[ &val.value().type() ](val);
+            } catch (const boost::bad_function_call&) {
+                msg = std::string("--show_options error: ") + val.value().type().name() + std::string(", long_name: ") + opt->long_name() + std::string(" is not listed!");
+                throw std::logic_error(msg);
+            }
+        }
+
+        composed_sstr << std::endl;
+    };
+
+    try {
+        std::for_each(po_hidden.options().begin(), po_hidden.options().end(), composing_helper);
+        std::for_each(po_cmdline.options().begin(), po_cmdline.options().end(), composing_helper);
+        std::for_each(po_config.options().begin(), po_config.options().end(), composing_helper);
+    } catch (const std::logic_error& e) {
+        msg = e.what();
+        return false;
+    }
+
+    msg += composed_sstr.str();
+    return true;
 }
 
 }

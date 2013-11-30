@@ -100,6 +100,67 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_help()
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
 }
 
+void TestConfiguration::test_ConfigurationBuilder_build_configuration_version()
+{
+    const int argc = 2;
+    const char* argv[argc] = { "mct", "-v" };
+    const bool expected_return_value = true;
+    mct::Configuration config(argc, (char**)argv);
+    mct::ConfigurationBuilder config_builder(config);
+    std::string message_to_user;
+    std::string expected_message("Mattsource's Connection Tunneler v. 0.1.0-dev");
+
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, config_builder.build_configuration(message_to_user));
+    CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
+}
+
+void TestConfiguration::test_ConfigurationBuilder_build_configuration_generate()
+{
+    const int argc = 2;
+    const char* argv[argc] = { "mct", "-g" };
+    const bool expected_return_value = true;
+    mct::Configuration config(argc, (char**)argv);
+    mct::ConfigurationBuilder config_builder(config);
+    std::string message_to_user;
+    std::string expected_message = "# This file has been auto-generated using '-g' cmdline parameter\n"
+                                   "# Version: 0.1.0 dev\n\n"
+
+                                   "#\n"
+                                   "# specifies the way the application is going to operate\n"
+                                   "# possible modes: ggserver, ggclient\n"
+                                   "#\n"
+                                   "# Default: ggclient\n\n"
+
+                                   "# mode =";
+
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, config_builder.build_configuration(message_to_user));
+    CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
+}
+
+void TestConfiguration::test_ConfigurationBuilder_build_configuration_show_options()
+{
+    const int argc = 3;
+    const char* argv[argc] = { "mct", "-v", "--show_options" };
+    const bool expected_return_value = true;
+    mct::Configuration config(argc, (char**)argv);
+    mct::ConfigurationBuilder config_builder(config);
+    std::string message_to_user;
+    std::string expected_message = 
+        "Program options and their current settings composed of cmdline and cfgfile:\n\n"
+
+        "--show_options: ON\n"
+        "-v [ --version ]: ON\n"
+        "-h [ --help ]: OFF\n"
+        "-g [ --generate ]: OFF\n"
+        "-c [ --config ]: mct.cfg\n"
+        "--mode: ggclient\n"
+        "Mattsource's Connection Tunneler v. 0.1.0-dev"
+        ;
+
+        CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, config_builder.build_configuration(message_to_user));
+        CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
+}
+
 CPPUNIT_TEST_SUITE_REGISTRATION(TestConfiguration);
 
 int main(int argc, char* argv[])
