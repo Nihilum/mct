@@ -74,7 +74,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_false()
     std::string error_msg;
 
     CPPUNIT_ASSERT_EQUAL(expected_return_value, config_builder.build_configuration(error_msg));
-    CPPUNIT_ASSERT_EQUAL(std::string("Could not find 'mct.cfg' file"), error_msg);
+    CPPUNIT_ASSERT_EQUAL(std::string("Could not open 'mct.cfg' file"), error_msg);
 }
 
 void TestConfiguration::test_ConfigurationBuilder_build_configuration_help()

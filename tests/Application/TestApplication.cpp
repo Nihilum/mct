@@ -48,7 +48,7 @@ void TestApplication::test_init_configuration_fail()
     const int argc = 1;
     const char* argv[argc] = { "mct" };
     const bool expected_return_value = false;
-    const std::string expected_message("Could not find 'mct.cfg' file");
+    const std::string expected_message("Could not open 'mct.cfg' file");
     std::string str_error;
     mct::Application app(argc, (char**)argv);
 
