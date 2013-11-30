@@ -35,6 +35,7 @@
 
 #include <Application/Config.hpp>
 
+#include <Logger/Logger.hpp>
 #include <Configuration/Configuration.hpp>
 
 namespace mct
@@ -46,11 +47,13 @@ public:
     Application(int argc, char** argv);
 
     bool init_configuration(std::string& msg);
+    bool init_logger(std::string& msg);
 
     int run();
 
 protected:
     Configuration m_config;
+    Logger m_log;
 };
 
 }

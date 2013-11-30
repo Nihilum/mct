@@ -182,6 +182,28 @@ void perf_test_ConfigurationBuilder_build_configuration_generate()
     std::cout << "END   perf_test_ConfigurationBuilder_build_configuration_generate()\n" << std::endl;
 }
 
+void perf_test_ConfigurationBuilder_build_configuration_show_options()
+{
+    nanosecond_type const expected_time(1000000); // 1 millisecond
+    std::cout << "START perf_test_ConfigurationBuilder_build_configuration_show_options()\n";
+
+    const int argc = 3;
+    const char* argv[argc] = { "mct", "-v", "--show_options" };
+
+    mct::Configuration config(argc, (char**)argv);
+    mct::ConfigurationBuilder config_builder(config);
+    std::string message_to_user;
+
+    cpu_timer timer;
+
+    volatile bool test = false;
+    test = config_builder.build_configuration(message_to_user);
+
+    timer.stop();
+    display_stats(timer, expected_time);
+    std::cout << "END   perf_test_ConfigurationBuilder_build_configuration_show_options()\n" << std::endl;
+}
+
 int main(int argc, char* argv[])
 {
     perf_test_Configuration_ctor();
@@ -190,4 +212,5 @@ int main(int argc, char* argv[])
     perf_test_ConfigurationBuilder_build_configuration_help();
     perf_test_ConfigurationBuilder_build_configuration_version();
     perf_test_ConfigurationBuilder_build_configuration_generate();
+    perf_test_ConfigurationBuilder_build_configuration_show_options();
 }

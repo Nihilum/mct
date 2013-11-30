@@ -31,14 +31,13 @@
 #include <iostream>
 
 #include <Application/Application.hpp>
-#include <Configuration/Configuration.hpp>
 #include <Configuration/ConfigurationBuilder.hpp>
 
 namespace mct
 {
 
 Application::Application(int argc, char** argv)
- : m_config(argc, argv)
+ : m_config(argc, argv), m_log(m_config)
 {
 }
 
@@ -50,6 +49,11 @@ bool Application::init_configuration(std::string& msg)
         return false;
     }
 
+    return true;
+}
+
+bool Application::init_logger(std::string& msg)
+{
     return true;
 }
 
@@ -70,6 +74,11 @@ int Application::run()
         // The program has been run using either -h, -v or -g options, exit here.
         if (m_config.get_app_mode() == "configuration_info_special_mode") {
             return 0;
+        }
+
+        if (init_logger(message_to_user) == false) {
+            std::cerr << "[Application::run()] init_logger failed.\nError: " << message_to_user << std::endl;
+            return 1;
         }
     }
 

@@ -21,5 +21,6 @@
 
 add_subdirectory(Application)
 add_subdirectory(Configuration)
+add_subdirectory(Logger)
 
 set(INTERNAL_LIBS ${INTERNAL_LIBS} PARENT_SCOPE)

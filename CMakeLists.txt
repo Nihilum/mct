@@ -138,7 +138,7 @@ if (DEFINED WIN32)
 
   set(MCT_BOOST_LIBS_INUSE ${MCT_BOOST_LIBS_INUSE} "boost_chrono-.*")
   #set(MCT_BOOST_LIBS_INUSE ${MCT_BOOST_LIBS_INUSE} "boost_date_time-.*")
-  #set(MCT_BOOST_LIBS_INUSE ${MCT_BOOST_LIBS_INUSE} "boost_filesystem-.*")
+  set(MCT_BOOST_LIBS_INUSE ${MCT_BOOST_LIBS_INUSE} "boost_filesystem-.*")
   #set(MCT_BOOST_LIBS_INUSE ${MCT_BOOST_LIBS_INUSE} "boost_log_setup-.*")
   #set(MCT_BOOST_LIBS_INUSE ${MCT_BOOST_LIBS_INUSE} "boost_log-.*")
   set(MCT_BOOST_LIBS_INUSE ${MCT_BOOST_LIBS_INUSE} "boost_program_options-.*")

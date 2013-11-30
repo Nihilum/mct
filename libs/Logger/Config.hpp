@@ -22,38 +22,41 @@
  */
 
 /**
- * @file tests/Application/TestApplication.hpp
+ * @file Logger/Config.hpp
  *
- * @desc Application entry point tests.
+ * @desc Macros used to control the library release environment.
  */
 
-#ifndef MCT_TESTS_APPLICATION_TEST_APPLICATION_HPP
-#define MCT_TESTS_APPLICATION_TEST_APPLICATION_HPP
+#ifndef MCT_LOGGER_CONFIG_HPP
+#define MCT_LOGGER_CONFIG_HPP
 
-#include <cppunit/TestRunner.h>
-#include <cppunit/TestResult.h>
-#include <cppunit/TestResultCollector.h>
-#include <cppunit/BriefTestProgressListener.h>
+/**
+ * Dynamic-link library Import/Export accross different environments.
+ */
 
-#include <cppunit/extensions/HelperMacros.h>
-#include <cppunit/extensions/TestFactoryRegistry.h>
+#if defined _MSC_VER || defined __CYGWIN__
+  #ifdef MCT_LOGGER_DLL
+    #ifdef __GNUC__
+      #define MCT_LOGGER_DLL_PUBLIC __attribute__ ((dllexport))
+    #else
+      #define MCT_LOGGER_DLL_PUBLIC __declspec(dllexport)
+    #endif
+  #else
+    #ifdef __GNUC__
+      #define MCT_LOGGER_DLL_PUBLIC __attribute__ ((dllimport))
+    #else
+      #define MCT_LOGGER_DLL_PUBLIC __declspec(dllimport)
+    #endif
+  #endif
+  #define MCT_LOGGER_DLL_LOCAL
+#else
+  #if __GNUC__ >= 4
+    #define MCT_LOGGER_DLL_PUBLIC __attribute__ ((visibility ("default")))
+    #define MOCCPP_DLL_LOCAL  __attribute__ ((visibility ("hidden")))
+  #else
+    #define MCT_LOGGER_DLL_PUBLIC
+    #define MCT_LOGGER_DLL_LOCAL
+  #endif
+#endif
 
-class TestApplication : public CPPUNIT_NS::TestCase
-{
-    CPPUNIT_TEST_SUITE(TestApplication);
-    CPPUNIT_TEST(test_init_configuration);
-    CPPUNIT_TEST(test_init_logger);
-    CPPUNIT_TEST(test_run);
-    CPPUNIT_TEST_SUITE_END();
-
-public:
-    void setUp();
-    void tearDown();
-
-protected:
-    void test_init_configuration();
-    void test_init_logger();
-    void test_run();
-};
-
-#endif // MCT_TESTS_APPLICATION_TEST_APPLICATION_HPP
+#endif // MCT_LOGGER_CONFIG_HPP

@@ -27,11 +27,16 @@
  * @desc Configuration entry point tests.
  */
 
+#include <config.hpp>
+
 #include <cppunit/CompilerOutputter.h>
 #include <cppunit/ui/text/TestRunner.h>
 
+#include <boost/filesystem.hpp>
+
 #include <Configuration/Configuration.hpp>
 #include <Configuration/ConfigurationBuilder.hpp>
+#include <Configuration/ConfigurationFileGenerator.hpp>
 
 #include "TestConfiguration.hpp"
 
@@ -159,6 +164,98 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_show_optio
 
         CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, config_builder.build_configuration(message_to_user));
         CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
+}
+
+void TestConfiguration::test_ConfigurationFileGenerator_generate()
+{
+    std::stringstream expected_output;
+    expected_output << "# This file has been auto-generated using '-g' cmdline parameter" << std::endl;
+    expected_output << "# Version: " << std::string(MCT_VERSION) << " " << std::string(MCT_TAG) << std::endl;
+    expected_output << std::endl;
+
+    expected_output << "#" << std::endl;
+    expected_output << "# This is a port comment" << std::endl;
+    expected_output << "#" << std::endl;
+    expected_output << "# Default: 5000" << std::endl << std::endl;
+    expected_output << "# port =" << std::endl << std::endl;
+
+    expected_output << "#" << std::endl;
+    expected_output << "# This is a host comment"<< std::endl;
+    expected_output << "#" << std::endl;
+    expected_output << "# Default: 127.0.0.1" << std::endl << std::endl;
+    expected_output << "# host =";
+
+    mct::ConfigurationFileGenerator gen;
+    gen.add_entry(mct::ConfigurationEntry("port", "# This is a port comment", "5000"));
+    gen.add_entry(mct::ConfigurationEntry("host", "# This is a host comment", "127.0.0.1"));
+
+    std::string cfgFile = gen.generate();
+
+    CPPUNIT_ASSERT_EQUAL(expected_output.str(), cfgFile);
+}
+
+void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_mode()
+{
+    std::string filename("./tbc_mode.cfg");
+    std::string expected_mode("ggclient");
+    std::string expected_message("Mattsource's Connection Tunneler v. 0.1.0-dev");
+    std::string message_to_user;
+    std::ofstream fs;
+
+    std::shared_ptr<std::ofstream> fileGuard(&fs, [&](std::ofstream*)
+    {
+        boost::filesystem::remove(filename);
+    });
+
+    fs.open(filename);
+    fs << "#" << std::endl;
+    fs << "# Standard comment support" << std::endl;
+    fs << "#" << std::endl;
+    fs << "mode = ggserver" << std::endl;
+    fs.close();
+
+    const int argc = 5;
+    const char* argv[argc] = { "mct", "-c", filename.c_str(), "--mode", expected_mode.c_str() };
+
+    const bool expected_return_value = true;
+    mct::Configuration config(argc, (char**)argv);
+    mct::ConfigurationBuilder config_builder(config);
+
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, config_builder.build_configuration(message_to_user));
+    CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
+    CPPUNIT_ASSERT_EQUAL(expected_mode, config.get_app_mode());
+}
+
+void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_mode()
+{
+    std::string filename("./tbc_mode.cfg");
+    std::string expected_mode("ggclient");
+    std::string expected_message("Mattsource's Connection Tunneler v. 0.1.0-dev");
+    std::string message_to_user;
+    std::ofstream fs;
+
+    std::shared_ptr<std::ofstream> fileGuard(&fs, [&](std::ofstream*)
+    {
+        boost::filesystem::remove(filename);
+    });
+
+    fs.open(filename);
+    fs << "#" << std::endl;
+    fs << "# Standard comment support" << std::endl;
+    fs << "#" << std::endl;
+    fs << "mode = " << expected_mode << std::endl;
+    fs.close();
+
+    const int argc = 3;
+    const char* argv[argc] = { "mct", "-c", filename.c_str() };
+
+    const bool expected_return_value = true;
+    mct::Configuration config(argc, (char**)argv);
+    mct::ConfigurationBuilder config_builder(config);
+
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, config_builder.build_configuration(message_to_user));
+    CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
+    CPPUNIT_ASSERT_EQUAL(expected_mode, config.get_app_mode());
 }
 
 CPPUNIT_TEST_SUITE_REGISTRATION(TestConfiguration);

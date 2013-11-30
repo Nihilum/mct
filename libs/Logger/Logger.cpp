@@ -22,38 +22,20 @@
  */
 
 /**
- * @file tests/Application/TestApplication.hpp
+ * @file Logger/Logger.hpp
  *
- * @desc Application entry point tests.
+ * @desc Class handling console and file output.
  */
 
-#ifndef MCT_TESTS_APPLICATION_TEST_APPLICATION_HPP
-#define MCT_TESTS_APPLICATION_TEST_APPLICATION_HPP
+#include <Logger/Logger.hpp>
+#include <Configuration/Configuration.hpp>
 
-#include <cppunit/TestRunner.h>
-#include <cppunit/TestResult.h>
-#include <cppunit/TestResultCollector.h>
-#include <cppunit/BriefTestProgressListener.h>
-
-#include <cppunit/extensions/HelperMacros.h>
-#include <cppunit/extensions/TestFactoryRegistry.h>
-
-class TestApplication : public CPPUNIT_NS::TestCase
+namespace mct
 {
-    CPPUNIT_TEST_SUITE(TestApplication);
-    CPPUNIT_TEST(test_init_configuration);
-    CPPUNIT_TEST(test_init_logger);
-    CPPUNIT_TEST(test_run);
-    CPPUNIT_TEST_SUITE_END();
 
-public:
-    void setUp();
-    void tearDown();
+Logger::Logger(Configuration& config)
+{
+}
 
-protected:
-    void test_init_configuration();
-    void test_init_logger();
-    void test_run();
-};
 
-#endif // MCT_TESTS_APPLICATION_TEST_APPLICATION_HPP
+}

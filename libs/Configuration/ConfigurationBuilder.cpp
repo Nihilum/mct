@@ -89,6 +89,9 @@ bool ConfigurationBuilder::build_configuration(std::string& msg)
         return false;
     }
 
+    // Version will be displayed upon program start-up
+    build_version_message(msg);
+
     return true;
 }
 

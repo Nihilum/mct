@@ -30,6 +30,8 @@
 #include <cppunit/CompilerOutputter.h>
 #include <cppunit/ui/text/TestRunner.h>
 
+#include <boost/filesystem.hpp>
+
 #include <Application/Application.hpp>
 
 #include "TestApplication.hpp"
@@ -42,7 +44,7 @@ void TestApplication::tearDown()
 {
 }
 
-void TestApplication::test_init_configuration_fail()
+void TestApplication::test_init_configuration()
 {
     std::cout << std::endl;
     const int argc = 1;
@@ -54,6 +56,36 @@ void TestApplication::test_init_configuration_fail()
 
     CPPUNIT_ASSERT_EQUAL(expected_return_value, app.init_configuration(str_error));
     CPPUNIT_ASSERT_EQUAL(expected_message, str_error);
+}
+
+void TestApplication::test_init_logger()
+{
+    std::cout << std::endl;
+    std::string filename("./tai_logger.cfg");
+    std::ofstream fs;
+    std::shared_ptr<std::ofstream> fileGuard(&fs, [&](std::ofstream*)
+    {
+        boost::filesystem::remove(filename);
+    });
+
+    fs.open(filename);
+    fs << "#" << std::endl;
+    fs << "# Standard comment support" << std::endl;
+    fs << "#" << std::endl;
+    fs << "mode = ggserver" << std::endl;
+    fs.close();
+
+    const int argc = 3;
+    const char* argv[argc] = { "mct", "-c", filename.c_str() };
+    const bool expected_return_value = true;
+    const std::string expected_message("Mattsource's Connection Tunneler v. 0.1.0-dev");
+    std::string message_to_user;
+    mct::Application app (argc, (char**)argv);
+
+    CPPUNIT_ASSERT_EQUAL(expected_return_value, app.init_configuration(message_to_user));
+    CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
+    CPPUNIT_ASSERT_EQUAL(expected_return_value, app.init_logger(message_to_user));
+    CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
 }
 
 void TestApplication::test_run()

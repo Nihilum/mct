@@ -34,10 +34,12 @@
 #include <vector>
 #include <utility>
 
+#include <Configuration/Config.hpp>
+
 namespace mct
 {
 
-class ConfigurationEntry
+class MCT_CONFIGURATION_DLL_PUBLIC ConfigurationEntry
 {
 public:
 	ConfigurationEntry(const std::string& name, const std::string& comment, const std::string& _default)
@@ -55,7 +57,7 @@ private:
 	std::string m_default;
 };
 
-class ConfigurationFileGenerator
+class MCT_CONFIGURATION_DLL_PUBLIC ConfigurationFileGenerator
 {
 public:
     /**
