@@ -30,9 +30,12 @@
 #include <ctime>
 #include <cmath>
 #include <string>
+#include <memory>
+#include <fstream>
 #include <cstdint>
 #include <iostream>
 
+#include <boost/filesystem.hpp>
 #include <boost/timer/timer.hpp>
 
 #include <Configuration/Configuration.hpp>
@@ -204,6 +207,48 @@ void perf_test_ConfigurationBuilder_build_configuration_show_options()
     std::cout << "END   perf_test_ConfigurationBuilder_build_configuration_show_options()\n" << std::endl;
 }
 
+void perf_test_ConfigurationBuilder_build_configuration_load_file()
+{
+    nanosecond_type const expected_time(1000000); // 1 millisecond
+    std::cout << "START perf_test_ConfigurationBuilder_build_configuration_load_file()\n";
+
+    const int gen_argc = 2;
+    const char* gen_argv[gen_argc] = { "mct", "-g" };
+    std::string filename("./perf_load_file.cfg");
+
+    mct::Configuration gen_config(gen_argc, (char**)gen_argv);
+    mct::ConfigurationBuilder gen_config_builder(gen_config);
+    std::string generated_conf;
+    gen_config_builder.build_configuration(generated_conf);
+
+    std::ofstream fs;
+
+    std::shared_ptr<std::ofstream> fileGuard(&fs, [&](std::ofstream*)
+    {
+        boost::filesystem::remove(filename);
+    });
+
+    fs.open(filename);
+    fs << generated_conf;
+    fs.close();
+
+    const int argc = 3;
+    const char* argv[argc] = { "mct", "-c", filename.c_str() };
+    std::string message_to_user;
+
+    mct::Configuration config(argc, (char**)argv);
+    mct::ConfigurationBuilder config_builder(config);
+
+    cpu_timer timer;
+
+    volatile bool test = false;
+    test = config_builder.build_configuration(message_to_user);
+
+    timer.stop();
+    display_stats(timer, expected_time);
+    std::cout << "END   perf_test_ConfigurationBuilder_build_configuration_load_file()\n" << std::endl;
+}
+
 int main(int argc, char* argv[])
 {
     perf_test_Configuration_ctor();
@@ -213,4 +258,5 @@ int main(int argc, char* argv[])
     perf_test_ConfigurationBuilder_build_configuration_version();
     perf_test_ConfigurationBuilder_build_configuration_generate();
     perf_test_ConfigurationBuilder_build_configuration_show_options();
+    perf_test_ConfigurationBuilder_build_configuration_load_file();
 }
