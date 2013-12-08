@@ -47,6 +47,7 @@ public:
     bool initialize(std::string& msg);
 
 protected:
+	Configuration& m_config;
 	bool m_is_initialized;
 };
 

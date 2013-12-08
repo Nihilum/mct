@@ -34,19 +34,20 @@ namespace mct
 {
 
 Logger::Logger(Configuration& config)
- : m_is_initialized(false)
+ : m_config(config), m_is_initialized(false)
 {
 }
 
 bool Logger::initialize(std::string& msg)
 {
-	if (m_is_initialized) {
-		msg = "Logger has already been initialized";
-		return false;
-	}
+    if (m_is_initialized) {
+        msg = "Logger has already been initialized";
+        return false;
+    }
 
-	m_is_initialized = true;
-	return true;
+    m_is_initialized = true;
+
+    return true;
 }
 
 }

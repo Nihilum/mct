@@ -35,7 +35,6 @@
 
 #include <Configuration/Configuration.hpp>
 #include <Configuration/ConfigurationBuilder.hpp>
-#include <Configuration/ConfigurationFileGenerator.hpp>
 
 #include <config.hpp>
 
@@ -117,6 +116,8 @@ bool ConfigurationBuilder::setup_config_fields(
             ("mode", po::value<std::string>(&m_config.m_mode)->default_value("ggclient"),
                   "specifies the way the application is going to operate\n"
                   "possible modes: ggserver, ggclient")
+            ("log.silent", po::value<bool>(&m_config.m_log_silent)->default_value(false),
+                  "should logger be completely silent")
             ;
 
         // Hidden options allowed with the command line and the config file
@@ -223,18 +224,41 @@ void ConfigurationBuilder::build_version_message(std::string& msg) const
 
 void ConfigurationBuilder::build_generate_message(std::string& msg, po::options_description& po_config) const
 {
-    ConfigurationFileGenerator gen;
+    std::stringstream cfgFile;
+    std::string newline;
+
+    {
+        std::stringstream tmpStr;
+        tmpStr << std::endl;
+        newline = tmpStr.str();
+    }
+
+    cfgFile << "# This file has been auto-generated using '-g' cmdline parameter" << std::endl;
+    cfgFile << "# Version: " << std::string(MCT_VERSION) << " " << std::string(MCT_TAG) << std::endl;
+    cfgFile << std::endl;
 
     std::for_each(po_config.options().begin(), po_config.options().end(), [&](const boost::shared_ptr<po::option_description>& opt){
-        gen.add_entry(ConfigurationEntry(
-            opt->long_name(),
-            std::string("# ") + opt->description(),
-            (opt->format_parameter().length() < 7) ? "" :
-            opt->format_parameter().substr(6, opt->format_parameter().length() - 7)
-        ));
+        cfgFile << "#" << std::endl;
+
+        std::string comment(std::string("# ") + opt->description());
+        int iPos = comment.find(newline);
+
+        while (iPos != std::string::npos) {
+            comment.replace(iPos++, 1, newline + std::string("# "));
+            iPos = comment.find(newline, iPos);
+        }
+
+        cfgFile << comment << std::endl;
+        cfgFile << "#" << std::endl;
+        cfgFile << "# Default: " << std::string((opt->format_parameter().length() < 7) ? "" :
+            opt->format_parameter().substr(6, opt->format_parameter().length() - 7)) << std::endl << std::endl;
+        cfgFile << "# " << opt->long_name() << " =" << std::endl << std::endl;
     });
 
-    msg += gen.generate();
+    std::string produced_string = cfgFile.str();
+    produced_string.erase(produced_string.length() - 2, 2); // remove final endls
+
+    msg += produced_string;
 }
 
 /**

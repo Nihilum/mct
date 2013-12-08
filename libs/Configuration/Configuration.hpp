@@ -53,9 +53,11 @@ public:
     const std::string get_app_name() const { return m_argv[0]; }
     const std::string& get_config_filename() const { return m_config_filename; }
     const std::string& get_app_mode() const { return m_mode; }
+    bool get_log_silent() const { return m_log_silent; }
 
     void set_config_filename(const std::string& filename) { m_config_filename = filename; }
     void set_app_mode(const std::string& mode) { m_mode = mode; }
+    void set_log_silent(const bool log_silent) { m_log_silent = log_silent; }
 
     static const std::string default_config_filename;
 
@@ -65,6 +67,8 @@ protected:
 
     std::string m_config_filename;
     std::string m_mode;
+
+    bool m_log_silent;
 };
 
 }

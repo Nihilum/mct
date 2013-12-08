@@ -36,7 +36,6 @@
 
 #include <Configuration/Configuration.hpp>
 #include <Configuration/ConfigurationBuilder.hpp>
-#include <Configuration/ConfigurationFileGenerator.hpp>
 
 #include "TestConfiguration.hpp"
 
@@ -136,7 +135,14 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_generate()
                                    "#\n"
                                    "# Default: ggclient\n\n"
 
-                                   "# mode =";
+                                   "# mode =\n\n"
+
+                                   "#\n"
+                                   "# should logger be completely silent\n"
+                                   "#\n"
+                                   "# Default: 0\n\n"
+
+                                   "# log.silent =";
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, config_builder.build_configuration(message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
@@ -159,39 +165,12 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_show_optio
         "-g [ --generate ]: OFF\n"
         "-c [ --config ]: mct.cfg\n"
         "--mode: ggclient\n"
+        "--log.silent: 0\n"
         "Mattsource's Connection Tunneler v. 0.1.0-dev"
         ;
 
         CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, config_builder.build_configuration(message_to_user));
         CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
-}
-
-void TestConfiguration::test_ConfigurationFileGenerator_generate()
-{
-    std::stringstream expected_output;
-    expected_output << "# This file has been auto-generated using '-g' cmdline parameter" << std::endl;
-    expected_output << "# Version: " << std::string(MCT_VERSION) << " " << std::string(MCT_TAG) << std::endl;
-    expected_output << std::endl;
-
-    expected_output << "#" << std::endl;
-    expected_output << "# This is a port comment" << std::endl;
-    expected_output << "#" << std::endl;
-    expected_output << "# Default: 5000" << std::endl << std::endl;
-    expected_output << "# port =" << std::endl << std::endl;
-
-    expected_output << "#" << std::endl;
-    expected_output << "# This is a host comment"<< std::endl;
-    expected_output << "#" << std::endl;
-    expected_output << "# Default: 127.0.0.1" << std::endl << std::endl;
-    expected_output << "# host =";
-
-    mct::ConfigurationFileGenerator gen;
-    gen.add_entry(mct::ConfigurationEntry("port", "# This is a port comment", "5000"));
-    gen.add_entry(mct::ConfigurationEntry("host", "# This is a host comment", "127.0.0.1"));
-
-    std::string cfgFile = gen.generate();
-
-    CPPUNIT_ASSERT_EQUAL(expected_output.str(), cfgFile);
 }
 
 void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_mode()
