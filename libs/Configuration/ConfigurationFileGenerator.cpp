@@ -76,14 +76,9 @@ std::string ConfigurationFileGenerator::generate()
 	return produced_string;
 }
 
-void ConfigurationFileGenerator::add_entry(const ConfigurationEntry& entry)
+void ConfigurationFileGenerator::add_entry(ConfigurationEntry&& entry)
 {
-	std::for_each(m_entries.begin(), m_entries.end(), [&](const ConfigurationEntry& item){
-		if (item.get_name() == entry.get_name())
-			return; // no double entries
-	});
-
-	m_entries.push_back(entry);
+	m_entries.push_back(std::move(entry));
 }
 
 }

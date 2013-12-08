@@ -44,7 +44,10 @@ class MCT_LOGGER_DLL_PUBLIC Logger
 public:
     Logger(Configuration& config);
 
+    bool initialize(std::string& msg);
+
 protected:
+	bool m_is_initialized;
 };
 
 }

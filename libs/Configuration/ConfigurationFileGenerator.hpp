@@ -42,19 +42,48 @@ namespace mct
 class MCT_CONFIGURATION_DLL_PUBLIC ConfigurationEntry
 {
 public:
-	ConfigurationEntry(const std::string& name, const std::string& comment, const std::string& _default)
-	 : m_name(name), m_comment(comment), m_default(_default)
-	{
-	}
+    ConfigurationEntry(const std::string& name, const std::string& comment, const std::string& _default)
+     : m_name(name), m_comment(comment), m_default(_default)
+    {
+    }
 
-	const std::string& get_name() const { return m_name; }
-	const std::string& get_comment() const { return m_comment; }
-	const std::string& get_default() const { return m_default; }
+    /**
+     * std::vector<ConfigurationEntry> on Windows requires operator= to be defined, when move ctor is defined
+     */
+    ConfigurationEntry& operator=(const ConfigurationEntry& entry)
+    {
+        if (&entry != this) {
+            m_name = entry.m_name;
+            m_comment = entry.m_comment;
+            m_default = entry.m_default;
+        }
+        return *this;
+    }
+
+    /**
+     * std::vector<ConfigurationEntry> on Windows requires copy ctor to be defined, when move ctor is defined
+     */
+    ConfigurationEntry(const ConfigurationEntry& other)
+    : m_name(other.m_name), m_comment(other.m_comment), m_default(other.m_default)
+    {
+    }
+
+    /**
+     * move ctor which is actually used for std::vector<ConfigurationEntry>().push_back(std::move(entry))
+     */
+    ConfigurationEntry(ConfigurationEntry&& other)
+    : m_name(std::move(other.m_name)), m_comment(std::move(other.m_comment)), m_default(std::move(other.m_default))
+    {
+    }
+
+    const std::string& get_name() const { return m_name; }
+    const std::string& get_comment() const { return m_comment; }
+    const std::string& get_default() const { return m_default; }
 
 private:
-	std::string m_name;
-	std::string m_comment;
-	std::string m_default;
+    std::string m_name;
+    std::string m_comment;
+    std::string m_default;
 };
 
 class MCT_CONFIGURATION_DLL_PUBLIC ConfigurationFileGenerator
@@ -66,16 +95,16 @@ public:
      * return:
      * - string containing configuration file
      */
-	std::string generate();
+    std::string generate();
 
-	/**
-	 * Adds configuration entry which will be used to generate the config file.
-	 *
-	 */
-	void add_entry(const ConfigurationEntry& entry);
+    /**
+     * Adds configuration entry which will be used to generate the config file.
+     *
+     */
+    void add_entry(ConfigurationEntry&& entry);
 
 private:
-	std::vector<ConfigurationEntry> m_entries;
+    std::vector<ConfigurationEntry> m_entries;
 };
 
 }

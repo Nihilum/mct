@@ -44,17 +44,12 @@ Application::Application(int argc, char** argv)
 bool Application::init_configuration(std::string& msg)
 {
     ConfigurationBuilder config_builder(m_config);
-
-    if (config_builder.build_configuration(msg) == false) {
-        return false;
-    }
-
-    return true;
+    return config_builder.build_configuration(msg);
 }
 
 bool Application::init_logger(std::string& msg)
 {
-    return true;
+    return m_log.initialize(msg);
 }
 
 int Application::run()

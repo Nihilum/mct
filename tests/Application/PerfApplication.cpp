@@ -74,7 +74,7 @@ void perf_test_init_configuration()
 
 void perf_test_run()
 {
-    nanosecond_type const expected_time(1000000); // 1 millisecond
+    nanosecond_type const expected_time(40000000); // 40 milliseconds
     std::cout << "START perf_test_run()\n";
 
     const int argc = 1;
