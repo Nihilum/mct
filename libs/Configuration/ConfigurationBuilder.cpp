@@ -118,6 +118,8 @@ bool ConfigurationBuilder::setup_config_fields(
                   "possible modes: ggserver, ggclient")
             ("log.silent", po::value<bool>(&m_config.m_log_silent)->default_value(false),
                   "should logger be completely silent")
+            ("log.nofile", po::value<bool>(&m_config.m_log_nofile)->default_value(false),
+                  "tells logger if any log files or directories can be created")
             ;
 
         // Hidden options allowed with the command line and the config file

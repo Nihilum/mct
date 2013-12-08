@@ -39,6 +39,50 @@
 
 #include "TestConfiguration.hpp"
 
+class ConfigFileReaderHelper
+{
+public:
+    ConfigFileReaderHelper(const std::string& filename, const std::string& key, const int argc, const char** argv)
+    : m_config(argc, (char**)argv), m_filename(filename), m_key(key), m_argc(argc), m_argv(argv)
+    {
+        std::cout << std::endl << "params: ";
+        for (int i = 0; i < argc; ++i) {
+            std::cout << argv[i] << " ";
+        }
+        std::cout << std::endl;
+    }
+
+    bool read_file(const std::string& given_default, std::string& message_to_user)
+    {
+        std::ofstream fs;
+
+        std::shared_ptr<std::ofstream> fileGuard(&fs, [&](std::ofstream*)
+        {
+            boost::filesystem::remove(m_filename);
+        });
+
+        fs.open(m_filename);
+        fs << "#" << std::endl;
+        fs << "# Standard comment support" << std::endl;
+        fs << "#" << std::endl;
+        fs << m_key << " = " << given_default << std::endl;
+        fs.close();
+
+        mct::ConfigurationBuilder config_builder(m_config);
+
+        return config_builder.build_configuration(message_to_user);
+    }
+
+    const mct::Configuration& get_config() const { return m_config; }
+
+private:
+    mct::Configuration m_config;
+    std::string m_filename;
+    std::string m_key;
+    const int m_argc;
+    const char** m_argv;
+};
+
 void TestConfiguration::setUp()
 {
 }
@@ -142,7 +186,14 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_generate()
                                    "#\n"
                                    "# Default: 0\n\n"
 
-                                   "# log.silent =";
+                                   "# log.silent =\n\n"
+
+                                   "#\n"
+                                   "# tells logger if any log files or directories can be created\n"
+                                   "#\n"
+                                   "# Default: 0\n\n"
+
+                                   "# log.nofile =";
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, config_builder.build_configuration(message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
@@ -166,6 +217,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_show_optio
         "-c [ --config ]: mct.cfg\n"
         "--mode: ggclient\n"
         "--log.silent: 0\n"
+        "--log.nofile: 0\n"
         "Mattsource's Connection Tunneler v. 0.1.0-dev"
         ;
 
@@ -175,66 +227,119 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_show_optio
 
 void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_mode()
 {
+    std::string param("mode");
+    std::string cmd_param("--"); cmd_param += param;
     std::string filename("./tbc_mode.cfg");
     std::string expected_mode("ggclient");
     std::string expected_message("Mattsource's Connection Tunneler v. 0.1.0-dev");
     std::string message_to_user;
-    std::ofstream fs;
-
-    std::shared_ptr<std::ofstream> fileGuard(&fs, [&](std::ofstream*)
-    {
-        boost::filesystem::remove(filename);
-    });
-
-    fs.open(filename);
-    fs << "#" << std::endl;
-    fs << "# Standard comment support" << std::endl;
-    fs << "#" << std::endl;
-    fs << "mode = ggserver" << std::endl;
-    fs.close();
+    const bool expected_return_value = true;
 
     const int argc = 5;
-    const char* argv[argc] = { "mct", "-c", filename.c_str(), "--mode", expected_mode.c_str() };
+    const char* argv[argc] = { "mct", "-c", filename.c_str(), cmd_param.c_str(), expected_mode.c_str() };
 
-    const bool expected_return_value = true;
-    mct::Configuration config(argc, (char**)argv);
-    mct::ConfigurationBuilder config_builder(config);
+    ConfigFileReaderHelper helper(filename, param, argc, argv);
 
-    CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, config_builder.build_configuration(message_to_user));
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("ggserver", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
-    CPPUNIT_ASSERT_EQUAL(expected_mode, config.get_app_mode());
+    CPPUNIT_ASSERT_EQUAL(expected_mode, helper.get_config().get_app_mode());
 }
 
 void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_mode()
 {
+    std::string param("mode");
     std::string filename("./tbc_mode.cfg");
     std::string expected_mode("ggclient");
     std::string expected_message("Mattsource's Connection Tunneler v. 0.1.0-dev");
     std::string message_to_user;
-    std::ofstream fs;
-
-    std::shared_ptr<std::ofstream> fileGuard(&fs, [&](std::ofstream*)
-    {
-        boost::filesystem::remove(filename);
-    });
-
-    fs.open(filename);
-    fs << "#" << std::endl;
-    fs << "# Standard comment support" << std::endl;
-    fs << "#" << std::endl;
-    fs << "mode = " << expected_mode << std::endl;
-    fs.close();
+    const bool expected_return_value = true;
 
     const int argc = 3;
     const char* argv[argc] = { "mct", "-c", filename.c_str() };
 
-    const bool expected_return_value = true;
-    mct::Configuration config(argc, (char**)argv);
-    mct::ConfigurationBuilder config_builder(config);
+    ConfigFileReaderHelper helper(filename, param, argc, argv);
 
-    CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, config_builder.build_configuration(message_to_user));
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("ggclient", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
-    CPPUNIT_ASSERT_EQUAL(expected_mode, config.get_app_mode());
+    CPPUNIT_ASSERT_EQUAL(expected_mode, helper.get_config().get_app_mode());
+}
+
+void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_log_silent()
+{
+    std::string param("log.silent");
+    std::string cmd_param("--"); cmd_param += param;
+    std::string filename("./tbc_log_silent.cfg");
+    bool expected_value = true;
+    std::string expected_message("Mattsource's Connection Tunneler v. 0.1.0-dev");
+    std::string message_to_user;
+    const bool expected_return_value = true;
+
+    const int argc = 5;
+    const char* argv[argc] = { "mct", "-c", filename.c_str(), cmd_param.c_str(), "true" };
+
+    ConfigFileReaderHelper helper(filename, param, argc, argv);
+
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("false", message_to_user));
+    CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
+    CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_silent());
+}
+
+void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_log_silent()
+{
+    std::string param("log.silent");
+    std::string filename("./tbc_log_silent.cfg");
+    bool expected_value = true;
+    std::string expected_message("Mattsource's Connection Tunneler v. 0.1.0-dev");
+    std::string message_to_user;
+    const bool expected_return_value = true;
+
+    const int argc = 3;
+    const char* argv[argc] = { "mct", "-c", filename.c_str() };
+
+    ConfigFileReaderHelper helper(filename, param, argc, argv);
+
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("true", message_to_user));
+    CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
+    CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_silent());
+}
+
+void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_log_nofile()
+{
+    std::string param("log.nofile");
+    std::string cmd_param("--"); cmd_param += param;
+    std::string filename("./tbc_log_nofile.cfg");
+    bool expected_value = true;
+    std::string expected_message("Mattsource's Connection Tunneler v. 0.1.0-dev");
+    std::string message_to_user;
+    const bool expected_return_value = true;
+
+    const int argc = 5;
+    const char* argv[argc] = { "mct", "-c", filename.c_str(), cmd_param.c_str(), "true" };
+
+    ConfigFileReaderHelper helper(filename, param, argc, argv);
+
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("false", message_to_user));
+    CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
+    CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_nofile());
+}
+
+void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_log_nofile()
+{
+    std::string param("log.nofile");
+    std::string filename("./tbc_log_nofile.cfg");
+    bool expected_value = true;
+    std::string expected_message("Mattsource's Connection Tunneler v. 0.1.0-dev");
+    std::string message_to_user;
+    const bool expected_return_value = true;
+
+    const int argc = 3;
+    const char* argv[argc] = { "mct", "-c", filename.c_str() };
+
+    ConfigFileReaderHelper helper(filename, param, argc, argv);
+
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("true", message_to_user));
+    CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
+    CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_nofile());
 }
 
 CPPUNIT_TEST_SUITE_REGISTRATION(TestConfiguration);

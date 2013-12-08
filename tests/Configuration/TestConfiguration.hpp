@@ -48,8 +48,13 @@ class TestConfiguration : public CPPUNIT_NS::TestCase
     CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_version);
     CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_generate);
     CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_show_options);
+
     CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cmd_mode);
     CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_mode);
+    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cmd_log_silent);
+    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_log_silent);
+    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cmd_log_nofile);
+    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_log_nofile);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -64,8 +69,13 @@ protected:
     void test_ConfigurationBuilder_build_configuration_version();
     void test_ConfigurationBuilder_build_configuration_generate();
     void test_ConfigurationBuilder_build_configuration_show_options();
+
     void test_ConfigurationBuilder_build_configuration_load_cmd_mode();
     void test_ConfigurationBuilder_build_configuration_load_cfg_mode();
+    void test_ConfigurationBuilder_build_configuration_load_cmd_log_silent();
+    void test_ConfigurationBuilder_build_configuration_load_cfg_log_silent();
+    void test_ConfigurationBuilder_build_configuration_load_cmd_log_nofile();
+    void test_ConfigurationBuilder_build_configuration_load_cfg_log_nofile();
 };
 
 #endif // MCT_TESTS_CONFIGURATION_TEST_CONFIGURATION_HPP

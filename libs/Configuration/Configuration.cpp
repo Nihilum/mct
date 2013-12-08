@@ -35,7 +35,7 @@ namespace mct
 const std::string Configuration::default_config_filename = "mct.cfg";
 
 Configuration::Configuration(int argc, char** argv)
- : m_argc(argc), m_argv(argv), m_log_silent(false)
+ : m_argc(argc), m_argv(argv), m_log_silent(false), m_log_nofile(false)
 {
 }
 
