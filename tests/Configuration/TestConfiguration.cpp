@@ -24,7 +24,7 @@
 /**
  * @file tests/Configuration/TestConfiguration.hpp
  *
- * @desc Configuration entry point tests.
+ * @desc Configuration functional tests.
  */
 
 #include <config.hpp>
@@ -193,7 +193,85 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_generate()
                                    "#\n"
                                    "# Default: 0\n\n"
 
-                                   "# log.nofile =";
+                                   "# log.nofile =\n\n"
+
+                                   "#\n"
+                                   "# directory name where the log files will be stored\n"
+                                   "#\n"
+                                   "# Default: logs\n\n"
+
+                                   "# log.directory =\n\n"
+
+                                   "#\n"
+                                   "# log filename, used only if log.rotate is set to 0\n"
+                                   "#\n"
+                                   "# Default: mct.log\n\n"
+
+                                   "# log.filename =\n\n"
+
+                                   "#\n"
+                                   "# date_time formatting for logger, the following variables may be used:\n"
+                                   "# www.boost.org/doc/libs/1_55_0/doc/html/date_time/date_time_io.html\n"
+                                   "#\n"
+                                   "# Default: %H:%M:%S.%f\n\n"
+
+                                   "# log.format =\n\n"
+
+                                   "#\n"
+                                   "# determines which log messages will be shown in the console,\n"
+                                   "# the following may be used:\n"
+                                   "# debug, info, warning, error, fatal\n"
+                                   "#\n"
+                                   "# Default: info\n\n"
+
+                                   "# log.severity.console =\n\n"
+
+                                   "#\n"
+                                   "# determines which log messages will be shown in the file,\n"
+                                   "# the following may be used:\n"
+                                   "# debug, info, warning, error, fatal\n"
+                                   "#\n"
+                                   "# Default: info\n\n"
+
+                                   "# log.severity.file =\n\n"
+
+                                   "#\n"
+                                   "# should logger use rotating log files\n"
+                                   "#\n"
+                                   "# Default: 0\n\n"
+
+                                   "# log.rotate =\n\n"
+
+                                   "#\n"
+                                   "# maximum size (in characters) of the rotating log file\n"
+                                   "#\n"
+                                   "# Default: 1048576\n\n"
+
+                                   "# log.rotate.size =\n\n"
+
+                                   "#\n"
+                                   "# filename pattern of the rotating log file,\n"
+                                   "# the following variables may be used:\n"
+                                   "# %Y -- year, %m -- month, %d -- day, %H -- hour, %M -- minute, %S -- second,\n"
+                                   "# %nN -- log's ordinal number (n - number of digits)\n"
+                                   "#\n"
+                                   "# Default: %Y%m%d_%H%M%S_%5N-mct.log\n\n"
+
+                                   "# log.rotate.filename =\n\n"
+
+                                   "#\n"
+                                   "# maximum size (in bytes) of all the rotating log files combined\n"
+                                   "#\n"
+                                   "# Default: 1073741824\n\n"
+
+                                   "# log.rotate.all_files_max_size =\n\n"
+
+                                   "#\n"
+                                   "# minimum free disk space (in bytes) to run rotating log files\n"
+                                   "#\n"
+                                   "# Default: 1073741824\n\n"
+
+                                   "# log.rotate.min_free_space =";
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, config_builder.build_configuration(message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
@@ -218,6 +296,16 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_show_optio
         "--mode: ggclient\n"
         "--log.silent: 0\n"
         "--log.nofile: 0\n"
+        "--log.directory: logs\n"
+        "--log.filename: mct.log\n"
+        "--log.format: %H:%M:%S.%f\n"
+        "--log.severity.console: info\n"
+        "--log.severity.file: info\n"
+        "--log.rotate: 0\n"
+        "--log.rotate.size: 1048576\n"
+        "--log.rotate.filename: %Y%m%d_%H%M%S_%5N-mct.log\n"
+        "--log.rotate.all_files_max_size: 1073741824\n"
+        "--log.rotate.min_free_space: 1073741824\n"
         "Mattsource's Connection Tunneler v. 0.1.0-dev"
         ;
 
@@ -340,6 +428,396 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_l
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("true", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
     CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_nofile());
+}
+
+void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_log_directory()
+{
+    std::string param("log.directory");
+    std::string cmd_param("--"); cmd_param += param;
+    std::string filename("./tbc_log_directory.cfg");
+    std::string expected_value("log");
+    std::string expected_message("Mattsource's Connection Tunneler v. 0.1.0-dev");
+    std::string message_to_user;
+    const bool expected_return_value = true;
+
+    const int argc = 5;
+    const char* argv[argc] = { "mct", "-c", filename.c_str(), cmd_param.c_str(), "log" };
+
+    ConfigFileReaderHelper helper(filename, param, argc, argv);
+
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("logs", message_to_user));
+    CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
+    CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_directory());
+}
+
+void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_log_directory()
+{
+    std::string param("log.directory");
+    std::string filename("./tbc_log_directory.cfg");
+    std::string expected_value("log");
+    std::string expected_message("Mattsource's Connection Tunneler v. 0.1.0-dev");
+    std::string message_to_user;
+    const bool expected_return_value = true;
+
+    const int argc = 3;
+    const char* argv[argc] = { "mct", "-c", filename.c_str() };
+
+    ConfigFileReaderHelper helper(filename, param, argc, argv);
+
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("log", message_to_user));
+    CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
+    CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_directory());
+}
+
+void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_log_filename()
+{
+    std::string param("log.filename");
+    std::string cmd_param("--"); cmd_param += param;
+    std::string filename("./tbc_log_filename.cfg");
+    std::string expected_value("conn.log");
+    std::string expected_message("Mattsource's Connection Tunneler v. 0.1.0-dev");
+    std::string message_to_user;
+    const bool expected_return_value = true;
+
+    const int argc = 5;
+    const char* argv[argc] = { "mct", "-c", filename.c_str(), cmd_param.c_str(), "conn.log" };
+
+    ConfigFileReaderHelper helper(filename, param, argc, argv);
+
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("tunnel.log", message_to_user));
+    CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
+    CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_filename());
+}
+
+void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_log_filename()
+{
+    std::string param("log.filename");
+    std::string filename("./tbc_log_filename.cfg");
+    std::string expected_value("conn.log");
+    std::string expected_message("Mattsource's Connection Tunneler v. 0.1.0-dev");
+    std::string message_to_user;
+    const bool expected_return_value = true;
+
+    const int argc = 3;
+    const char* argv[argc] = { "mct", "-c", filename.c_str() };
+
+    ConfigFileReaderHelper helper(filename, param, argc, argv);
+
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("conn.log", message_to_user));
+    CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
+    CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_filename());
+}
+
+void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_log_format()
+{
+    std::string param("log.format");
+    std::string cmd_param("--"); cmd_param += param;
+    std::string filename("./tbc_log_format.cfg");
+    std::string expected_value("%H:%M");
+    std::string expected_message("Mattsource's Connection Tunneler v. 0.1.0-dev");
+    std::string message_to_user;
+    const bool expected_return_value = true;
+
+    const int argc = 5;
+    const char* argv[argc] = { "mct", "-c", filename.c_str(), cmd_param.c_str(), "%H:%M" };
+
+    ConfigFileReaderHelper helper(filename, param, argc, argv);
+
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("%H:%M:%S", message_to_user));
+    CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
+    CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_format());
+}
+
+void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_log_format()
+{
+    std::string param("log.format");
+    std::string filename("./tbc_log_format.cfg");
+    std::string expected_value("%H:%M");
+    std::string expected_message("Mattsource's Connection Tunneler v. 0.1.0-dev");
+    std::string message_to_user;
+    const bool expected_return_value = true;
+
+    const int argc = 3;
+    const char* argv[argc] = { "mct", "-c", filename.c_str() };
+
+    ConfigFileReaderHelper helper(filename, param, argc, argv);
+
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("%H:%M", message_to_user));
+    CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
+    CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_format());
+}
+
+void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_log_severity_console()
+{
+    std::string param("log.severity.console");
+    std::string cmd_param("--"); cmd_param += param;
+    std::string filename("./tbc_log_severity_console.cfg");
+    std::string expected_value("debug");
+    std::string expected_message("Mattsource's Connection Tunneler v. 0.1.0-dev");
+    std::string message_to_user;
+    const bool expected_return_value = true;
+
+    const int argc = 5;
+    const char* argv[argc] = { "mct", "-c", filename.c_str(), cmd_param.c_str(), "debug" };
+
+    ConfigFileReaderHelper helper(filename, param, argc, argv);
+
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("warning", message_to_user));
+    CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
+    CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_severity_console());
+}
+
+void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_log_severity_console()
+{
+    std::string param("log.severity.console");
+    std::string filename("./tbc_log_severity_console.cfg");
+    std::string expected_value("debug");
+    std::string expected_message("Mattsource's Connection Tunneler v. 0.1.0-dev");
+    std::string message_to_user;
+    const bool expected_return_value = true;
+
+    const int argc = 3;
+    const char* argv[argc] = { "mct", "-c", filename.c_str() };
+
+    ConfigFileReaderHelper helper(filename, param, argc, argv);
+
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("debug", message_to_user));
+    CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
+    CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_severity_console());
+}
+
+void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_log_severity_file()
+{
+    std::string param("log.severity.file");
+    std::string cmd_param("--"); cmd_param += param;
+    std::string filename("./tbc_log_severity_file.cfg");
+    std::string expected_value("debug");
+    std::string expected_message("Mattsource's Connection Tunneler v. 0.1.0-dev");
+    std::string message_to_user;
+    const bool expected_return_value = true;
+
+    const int argc = 5;
+    const char* argv[argc] = { "mct", "-c", filename.c_str(), cmd_param.c_str(), "debug" };
+
+    ConfigFileReaderHelper helper(filename, param, argc, argv);
+
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("warning", message_to_user));
+    CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
+    CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_severity_file());
+}
+
+void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_log_severity_file()
+{
+    std::string param("log.severity.file");
+    std::string filename("./tbc_log_severity_file.cfg");
+    std::string expected_value("debug");
+    std::string expected_message("Mattsource's Connection Tunneler v. 0.1.0-dev");
+    std::string message_to_user;
+    const bool expected_return_value = true;
+
+    const int argc = 3;
+    const char* argv[argc] = { "mct", "-c", filename.c_str() };
+
+    ConfigFileReaderHelper helper(filename, param, argc, argv);
+
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("debug", message_to_user));
+    CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
+    CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_severity_file());
+}
+
+void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_log_rotate()
+{
+    std::string param("log.rotate");
+    std::string cmd_param("--"); cmd_param += param;
+    std::string filename("./tbc_log_rotate.cfg");
+    bool expected_value = true;
+    std::string expected_message("Mattsource's Connection Tunneler v. 0.1.0-dev");
+    std::string message_to_user;
+    const bool expected_return_value = true;
+
+    const int argc = 5;
+    const char* argv[argc] = { "mct", "-c", filename.c_str(), cmd_param.c_str(), "true" };
+
+    ConfigFileReaderHelper helper(filename, param, argc, argv);
+
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("false", message_to_user));
+    CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
+    CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_rotate());
+}
+
+void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_log_rotate()
+{
+    std::string param("log.rotate");
+    std::string filename("./tbc_log_rotate.cfg");
+    bool expected_value = true;
+    std::string expected_message("Mattsource's Connection Tunneler v. 0.1.0-dev");
+    std::string message_to_user;
+    const bool expected_return_value = true;
+
+    const int argc = 3;
+    const char* argv[argc] = { "mct", "-c", filename.c_str() };
+
+    ConfigFileReaderHelper helper(filename, param, argc, argv);
+
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("true", message_to_user));
+    CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
+    CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_rotate());
+}
+
+void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_log_rotate_size()
+{
+    std::string param("log.rotate.size");
+    std::string cmd_param("--"); cmd_param += param;
+    std::string filename("./tbc_log_rotate_size.cfg");
+    uint64_t expected_value = 1024;
+    std::string expected_message("Mattsource's Connection Tunneler v. 0.1.0-dev");
+    std::string message_to_user;
+    const bool expected_return_value = true;
+
+    const int argc = 5;
+    const char* argv[argc] = { "mct", "-c", filename.c_str(), cmd_param.c_str(), "1024" };
+
+    ConfigFileReaderHelper helper(filename, param, argc, argv);
+
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("4096", message_to_user));
+    CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
+    CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_rotate_size());
+}
+
+void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_log_rotate_size()
+{
+    std::string param("log.rotate.size");
+    std::string filename("./tbc_log_rotate_size.cfg");
+    uint64_t expected_value = 1024;
+    std::string expected_message("Mattsource's Connection Tunneler v. 0.1.0-dev");
+    std::string message_to_user;
+    const bool expected_return_value = true;
+
+    const int argc = 3;
+    const char* argv[argc] = { "mct", "-c", filename.c_str() };
+
+    ConfigFileReaderHelper helper(filename, param, argc, argv);
+
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("1024", message_to_user));
+    CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
+    CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_rotate_size());
+}
+
+void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_log_rotate_filename()
+{
+    std::string param("log.rotate.filename");
+    std::string cmd_param("--"); cmd_param += param;
+    std::string filename("./tbc_log_rotate_filename.cfg");
+    std::string expected_value("%H_%M-mct.log");
+    std::string expected_message("Mattsource's Connection Tunneler v. 0.1.0-dev");
+    std::string message_to_user;
+    const bool expected_return_value = true;
+
+    const int argc = 5;
+    const char* argv[argc] = { "mct", "-c", filename.c_str(), cmd_param.c_str(), "%H_%M-mct.log" };
+
+    ConfigFileReaderHelper helper(filename, param, argc, argv);
+
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("%M-mct.log", message_to_user));
+    CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
+    CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_rotate_filename());
+}
+
+void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_log_rotate_filename()
+{
+    std::string param("log.rotate.filename");
+    std::string filename("./tbc_log_rotate_filename.cfg");
+    std::string expected_value("%H_%M-mct.log");
+    std::string expected_message("Mattsource's Connection Tunneler v. 0.1.0-dev");
+    std::string message_to_user;
+    const bool expected_return_value = true;
+
+    const int argc = 3;
+    const char* argv[argc] = { "mct", "-c", filename.c_str() };
+
+    ConfigFileReaderHelper helper(filename, param, argc, argv);
+
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("%H_%M-mct.log", message_to_user));
+    CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
+    CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_rotate_filename());
+}
+
+void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_log_rotate_all_files_max_size()
+{
+    std::string param("log.rotate.all_files_max_size");
+    std::string cmd_param("--"); cmd_param += param;
+    std::string filename("./tbc_log_rotate_all_files_max_size.cfg");
+    uint64_t expected_value = 1024;
+    std::string expected_message("Mattsource's Connection Tunneler v. 0.1.0-dev");
+    std::string message_to_user;
+    const bool expected_return_value = true;
+
+    const int argc = 5;
+    const char* argv[argc] = { "mct", "-c", filename.c_str(), cmd_param.c_str(), "1024" };
+
+    ConfigFileReaderHelper helper(filename, param, argc, argv);
+
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("4096", message_to_user));
+    CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
+    CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_rotate_all_files_max_size());
+}
+
+void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_log_rotate_all_files_max_size()
+{
+    std::string param("log.rotate.all_files_max_size");
+    std::string filename("./tbc_log_rotate_all_files_max_size.cfg");
+    uint64_t expected_value = 1024;
+    std::string expected_message("Mattsource's Connection Tunneler v. 0.1.0-dev");
+    std::string message_to_user;
+    const bool expected_return_value = true;
+
+    const int argc = 3;
+    const char* argv[argc] = { "mct", "-c", filename.c_str() };
+
+    ConfigFileReaderHelper helper(filename, param, argc, argv);
+
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("1024", message_to_user));
+    CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
+    CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_rotate_all_files_max_size());
+}
+
+void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_log_rotate_min_free_space()
+{
+    std::string param("log.rotate.min_free_space");
+    std::string cmd_param("--"); cmd_param += param;
+    std::string filename("./tbc_log_rotate_min_free_space.cfg");
+    uint64_t expected_value = 1024;
+    std::string expected_message("Mattsource's Connection Tunneler v. 0.1.0-dev");
+    std::string message_to_user;
+    const bool expected_return_value = true;
+
+    const int argc = 5;
+    const char* argv[argc] = { "mct", "-c", filename.c_str(), cmd_param.c_str(), "1024" };
+
+    ConfigFileReaderHelper helper(filename, param, argc, argv);
+
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("4096", message_to_user));
+    CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
+    CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_rotate_min_free_space());
+}
+
+void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_log_rotate_min_free_space()
+{
+    std::string param("log.rotate.min_free_space");
+    std::string filename("./tbc_log_rotate_min_free_space.cfg");
+    uint64_t expected_value = 1024;
+    std::string expected_message("Mattsource's Connection Tunneler v. 0.1.0-dev");
+    std::string message_to_user;
+    const bool expected_return_value = true;
+
+    const int argc = 3;
+    const char* argv[argc] = { "mct", "-c", filename.c_str() };
+
+    ConfigFileReaderHelper helper(filename, param, argc, argv);
+
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("1024", message_to_user));
+    CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
+    CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_rotate_min_free_space());
 }
 
 CPPUNIT_TEST_SUITE_REGISTRATION(TestConfiguration);

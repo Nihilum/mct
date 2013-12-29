@@ -38,17 +38,29 @@ namespace mct
 {
 
 class Configuration;
+class LoggerImpl;
 
 class MCT_LOGGER_DLL_PUBLIC Logger
 {
 public:
     Logger(Configuration& config);
+    ~Logger();
+
+    Logger(const Logger&) = delete;
+    Logger& operator=(const Logger&) = delete;
 
     bool initialize(std::string& msg);
 
-protected:
-	Configuration& m_config;
-	bool m_is_initialized;
+    void debug(const char* format, ...);
+    void info(const char* format, ...);
+    void warning(const char* format, ...);
+    void error(const char* format, ...);
+    void fatal(const char* format, ...);
+
+    void log_if_not_silent(const char* format, ...);
+
+private:
+    LoggerImpl* m_pImpl;
 };
 
 }

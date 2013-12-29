@@ -127,6 +127,7 @@ else()
     moccpp
     ${INTERNAL_LIBS}
     boost_program_options
+    boost_log
   )
 endif()
 
@@ -137,14 +138,14 @@ if (DEFINED WIN32)
   add_definitions( -D_WIN32_WINNT=0x0501 )
 
   set(MCT_BOOST_LIBS_INUSE ${MCT_BOOST_LIBS_INUSE} "boost_chrono-.*")
-  #set(MCT_BOOST_LIBS_INUSE ${MCT_BOOST_LIBS_INUSE} "boost_date_time-.*")
+  set(MCT_BOOST_LIBS_INUSE ${MCT_BOOST_LIBS_INUSE} "boost_date_time-.*")
   set(MCT_BOOST_LIBS_INUSE ${MCT_BOOST_LIBS_INUSE} "boost_filesystem-.*")
   #set(MCT_BOOST_LIBS_INUSE ${MCT_BOOST_LIBS_INUSE} "boost_log_setup-.*")
-  #set(MCT_BOOST_LIBS_INUSE ${MCT_BOOST_LIBS_INUSE} "boost_log-.*")
+  set(MCT_BOOST_LIBS_INUSE ${MCT_BOOST_LIBS_INUSE} "boost_log-.*")
   set(MCT_BOOST_LIBS_INUSE ${MCT_BOOST_LIBS_INUSE} "boost_program_options-.*")
-  #set(MCT_BOOST_LIBS_INUSE ${MCT_BOOST_LIBS_INUSE} "boost_regex-.*")
+  set(MCT_BOOST_LIBS_INUSE ${MCT_BOOST_LIBS_INUSE} "boost_regex-.*")
   set(MCT_BOOST_LIBS_INUSE ${MCT_BOOST_LIBS_INUSE} "boost_system-.*")
-  #set(MCT_BOOST_LIBS_INUSE ${MCT_BOOST_LIBS_INUSE} "boost_thread-.*")
+  set(MCT_BOOST_LIBS_INUSE ${MCT_BOOST_LIBS_INUSE} "boost_thread-.*")
   set(MCT_BOOST_LIBS_INUSE ${MCT_BOOST_LIBS_INUSE} "boost_timer-.*")
 
 

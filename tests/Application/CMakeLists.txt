@@ -20,16 +20,11 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 set(TEST_NAME mct_test_Application)
-set(PERF_NAME mct_perf_Application)
 
 set(TEST_SRCS
   TestApplication.hpp
   TestApplication.cpp
-  )
-
-set(PERF_SRCS
-  PerfApplication.cpp
-  )
+)
 
 SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
 SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE) 
@@ -65,23 +60,15 @@ endif()
 link_directories(${Boost_LIBRARY_DIRS})
 
 add_executable(${TEST_NAME} ${TEST_SRCS})
-add_executable(${PERF_NAME} ${PERF_SRCS})
 
 if(WIN32)
-  target_link_libraries(${PERF_NAME} mctapp mctconfig ${MOCCPP_LIB})
   target_link_libraries(${TEST_NAME} mctapp mctconfig ${MOCCPP_LIB} ${CPPUNIT_LIBRARY})
 else()
-  target_link_libraries(${PERF_NAME} mctapp mctconfig ${MOCCPP_LIB} boost_timer boost_system boost_program_options)
   target_link_libraries(${TEST_NAME} mctapp mctconfig ${MOCCPP_LIB} ${CPPUNIT_LIBRARY} boost_program_options)
 endif()
 
 install(TARGETS ${TEST_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/tests)
-install(TARGETS ${PERF_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/tests)
 
 set_target_properties(${TEST_NAME} PROPERTIES COMPILE_FLAGS
-  "${PROGRAM_COMPILE_FLAGS}"
-)
-
-set_target_properties(${PERF_NAME} PROPERTIES COMPILE_FLAGS
   "${PROGRAM_COMPILE_FLAGS}"
 )

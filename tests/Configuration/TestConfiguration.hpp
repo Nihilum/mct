@@ -24,7 +24,7 @@
 /**
  * @file tests/Configuration/TestConfiguration.hpp
  *
- * @desc Configuration entry point tests.
+ * @desc Configuration functional tests.
  */
 
 #ifndef MCT_TESTS_CONFIGURATION_TEST_CONFIGURATION_HPP
@@ -55,6 +55,26 @@ class TestConfiguration : public CPPUNIT_NS::TestCase
     CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_log_silent);
     CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cmd_log_nofile);
     CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_log_nofile);
+    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cmd_log_directory);
+    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_log_directory);
+    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cmd_log_filename);
+    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_log_filename);
+    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cmd_log_format);
+    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_log_format);
+    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cmd_log_severity_console);
+    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_log_severity_console);
+    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cmd_log_severity_file);
+    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_log_severity_file);
+    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cmd_log_rotate);
+    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_log_rotate);
+    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cmd_log_rotate_size);
+    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_log_rotate_size);
+    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cmd_log_rotate_filename);
+    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_log_rotate_filename);
+    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cmd_log_rotate_all_files_max_size);
+    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_log_rotate_all_files_max_size);
+    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cmd_log_rotate_min_free_space);
+    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_log_rotate_min_free_space);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -76,6 +96,26 @@ protected:
     void test_ConfigurationBuilder_build_configuration_load_cfg_log_silent();
     void test_ConfigurationBuilder_build_configuration_load_cmd_log_nofile();
     void test_ConfigurationBuilder_build_configuration_load_cfg_log_nofile();
+    void test_ConfigurationBuilder_build_configuration_load_cmd_log_directory();
+    void test_ConfigurationBuilder_build_configuration_load_cfg_log_directory();
+    void test_ConfigurationBuilder_build_configuration_load_cmd_log_filename();
+    void test_ConfigurationBuilder_build_configuration_load_cfg_log_filename();
+    void test_ConfigurationBuilder_build_configuration_load_cmd_log_format();
+    void test_ConfigurationBuilder_build_configuration_load_cfg_log_format();
+    void test_ConfigurationBuilder_build_configuration_load_cmd_log_severity_console();
+    void test_ConfigurationBuilder_build_configuration_load_cfg_log_severity_console();
+    void test_ConfigurationBuilder_build_configuration_load_cmd_log_severity_file();
+    void test_ConfigurationBuilder_build_configuration_load_cfg_log_severity_file();
+    void test_ConfigurationBuilder_build_configuration_load_cmd_log_rotate();
+    void test_ConfigurationBuilder_build_configuration_load_cfg_log_rotate();
+    void test_ConfigurationBuilder_build_configuration_load_cmd_log_rotate_size();
+    void test_ConfigurationBuilder_build_configuration_load_cfg_log_rotate_size();
+    void test_ConfigurationBuilder_build_configuration_load_cmd_log_rotate_filename();
+    void test_ConfigurationBuilder_build_configuration_load_cfg_log_rotate_filename();
+    void test_ConfigurationBuilder_build_configuration_load_cmd_log_rotate_all_files_max_size();
+    void test_ConfigurationBuilder_build_configuration_load_cfg_log_rotate_all_files_max_size();
+    void test_ConfigurationBuilder_build_configuration_load_cmd_log_rotate_min_free_space();
+    void test_ConfigurationBuilder_build_configuration_load_cfg_log_rotate_min_free_space();
 };
 
 #endif // MCT_TESTS_CONFIGURATION_TEST_CONFIGURATION_HPP

@@ -19,17 +19,21 @@
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-set(LIBRARY_NAME mctapp)
+set(TEST_NAME mct_test_Logger)
 
-if(WIN32)
-  # Disable dll-external warnings for Visual Studio; [/GS-] disable buffer overflow security checks (optimization)
-  set(LIBRARY_COMPILE_FLAGS ${LIBRARY_COMPILE_FLAGS} "-DMCT_APPLICATION_DLL=1 /wd4251 /wd4275 /GS-")
-else()
-  # Activate C++11 mode for GNU/GCC
-  set(LIBRARY_COMPILE_FLAGS ${LIBRARY_COMPILE_FLAGS} "-std=c++11 -DMCT_APPLICATION_DLL=1")
+set(TEST_SRCS
+  TestLogger.hpp
+  TestLogger.cpp
+)
+
+SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
+SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE) 
+SET(CMAKE_INSTALL_RPATH "\$ORIGIN")
+SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
+
+if(NOT DEFINED WIN32)
+  SET(CMAKE_EXE_LINKER_FLAGS "-Wl,--enable-new-dtags")
 endif()
-
-file(GLOB_RECURSE LIBRARY_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/ ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp)
 
 link_directories(${Boost_LIBRARY_DIRS} ${MOCCPPLIB_LIBRARIES})
 
@@ -38,33 +42,33 @@ include_directories(
   ${Boost_INCLUDE_DIRS}
   ${MOCCPPLIB_INCLUDES}
   ${CMAKE_SOURCE_DIR}/libs
+  ${CPPUNIT_INCLUDES}
 )
 
-add_library(${LIBRARY_NAME} SHARED
-  ${LIBRARY_SRCS}
-)
+add_definitions( ${Boost_LIB_DIAGNOSTIC_DEFINITIONS} )
+add_definitions( -DBOOST_ALL_DYN_LINK )
+add_definitions( -DBOOST_FILESYSTEM_NO_DEPRECATED )
 
-set(INTERNAL_LIBS ${INTERNAL_LIBS} ${LIBRARY_NAME})
-set(INTERNAL_LIBS ${INTERNAL_LIBS} PARENT_SCOPE)
-
-if (DEFINED WIN32)
-  install(TARGETS ${LIBRARY_NAME}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}
-  )
-  install(TARGETS ${LIBRARY_NAME}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/tests
-  )
+if(WIN32)
+  # Disable dll-external warnings for Visual Studio; [/GS-] disable buffer overflow security checks (optimization) 
+  set(PROGRAM_COMPILE_FLAGS ${PROGRAM_COMPILE_FLAGS} "/wd4251 /GS-")
 else()
-  install(TARGETS ${LIBRARY_NAME}
-    LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
-  )
-  install(TARGETS ${LIBRARY_NAME}
-    LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/tests
-  )
+  # Activate C++11 mode for GNU/GCC
+  set(PROGRAM_COMPILE_FLAGS ${PROGRAM_COMPILE_FLAGS} "-std=c++11")
 endif()
 
-set_target_properties(${LIBRARY_NAME} PROPERTIES COMPILE_FLAGS
-  "${LIBRARY_COMPILE_FLAGS}"
-)
+link_directories(${Boost_LIBRARY_DIRS})
 
-target_link_libraries(${LIBRARY_NAME} mctconfig mctlog)
+add_executable(${TEST_NAME} ${TEST_SRCS})
+
+if(WIN32)
+  target_link_libraries(${TEST_NAME} mctconfig mctlog ${MOCCPP_LIB} ${CPPUNIT_LIBRARY})
+else()
+  target_link_libraries(${TEST_NAME} mctconfig mctlog ${MOCCPP_LIB} ${CPPUNIT_LIBRARY} boost_program_options boost_log boost_system)
+endif()
+
+install(TARGETS ${TEST_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/tests)
+
+set_target_properties(${TEST_NAME} PROPERTIES COMPILE_FLAGS
+  "${PROGRAM_COMPILE_FLAGS}"
+)

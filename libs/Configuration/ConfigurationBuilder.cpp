@@ -72,20 +72,30 @@ bool ConfigurationBuilder::build_configuration(std::string& msg)
         return false;
     }
 
-    if (vm.count("show_options") == 1) {
-        if (build_show_options_message(msg, vm, po_hidden, po_cmdline, po_config) == false) {
-            return false;
-        }
-    }
-
     // If this method returns true, then the program is running in special info mode; change mode and return true
     if (handle_configuration_info_special_mode(msg, po_cmdline, po_config, vm) == true) {
         m_config.set_app_mode("configuration_info_special_mode");
+
+        if (vm.count("show_options") == 1) {
+            std::string tmp_msg = msg;
+            msg.clear();
+            if (build_show_options_message(msg, vm, po_hidden, po_cmdline, po_config) == false) {
+                return false;
+            }
+            msg += tmp_msg;
+        }
+
         return true;
     }
 
     if (load_cfgfile(msg, config_file_options, vm) == false) {
         return false;
+    }
+
+    if (vm.count("show_options") == 1) {
+        if (build_show_options_message(msg, vm, po_hidden, po_cmdline, po_config) == false) {
+            return false;
+        }
     }
 
     // Version will be displayed upon program start-up
@@ -120,6 +130,34 @@ bool ConfigurationBuilder::setup_config_fields(
                   "should logger be completely silent")
             ("log.nofile", po::value<bool>(&m_config.m_log_nofile)->default_value(false),
                   "tells logger if any log files or directories can be created")
+            ("log.directory", po::value<std::string>(&m_config.m_log_directory)->default_value("logs"),
+                  "directory name where the log files will be stored")
+            ("log.filename", po::value<std::string>(&m_config.m_log_filename)->default_value("mct.log"),
+                  "log filename, used only if log.rotate is set to 0")
+            ("log.format", po::value<std::string>(&m_config.m_log_format)->default_value("%H:%M:%S.%f"),
+                  "date_time formatting for logger, the following variables may be used:\n"
+                  "www.boost.org/doc/libs/1_55_0/doc/html/date_time/date_time_io.html")
+            ("log.severity.console", po::value<std::string>(&m_config.m_log_severity_console)->default_value("info"),
+                  "determines which log messages will be shown in the console,\n"
+                  "the following may be used:\n"
+                  "debug, info, warning, error, fatal")
+            ("log.severity.file", po::value<std::string>(&m_config.m_log_severity_file)->default_value("info"),
+                  "determines which log messages will be shown in the file,\n"
+                  "the following may be used:\n"
+                  "debug, info, warning, error, fatal")
+            ("log.rotate", po::value<bool>(&m_config.m_log_rotate)->default_value(false),
+                  "should logger use rotating log files")
+            ("log.rotate.size", po::value<uint64_t>(&m_config.m_log_rotate_size)->default_value(1048576),
+                  "maximum size (in characters) of the rotating log file")
+            ("log.rotate.filename", po::value<std::string>(&m_config.m_log_rotate_filename)->default_value("%Y%m%d_%H%M%S_%5N-mct.log"),
+                  "filename pattern of the rotating log file,\n"
+                  "the following variables may be used:\n"
+                  "%Y -- year, %m -- month, %d -- day, %H -- hour, %M -- minute, %S -- second,\n"
+                  "%nN -- log's ordinal number (n - number of digits)")
+            ("log.rotate.all_files_max_size", po::value<uint64_t>(&m_config.m_log_rotate_all_files_max_size)->default_value(1073741824),
+                  "maximum size (in bytes) of all the rotating log files combined")
+            ("log.rotate.min_free_space", po::value<uint64_t>(&m_config.m_log_rotate_min_free_space)->default_value(1073741824),
+                  "minimum free disk space (in bytes) to run rotating log files")
             ;
 
         // Hidden options allowed with the command line and the config file

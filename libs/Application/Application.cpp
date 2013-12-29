@@ -63,10 +63,12 @@ int Application::run()
             return 1;
         }
 
-        // Display standard message or error
-        std::cout << message_to_user << std::endl;
+        if (m_config.get_log_silent() == false) {
+            // greet user or handle -v, -h, -g options
+            std::cout << message_to_user << std::endl << std::endl;
+        }
 
-        // The program has been run using either -h, -v or -g options, exit here.
+        // if the program was run using either -h, -v or -g options, exit here.
         if (m_config.get_app_mode() == "configuration_info_special_mode") {
             return 0;
         }
@@ -76,6 +78,9 @@ int Application::run()
             return 1;
         }
     }
+
+    m_log.info("test %d", 123);
+    m_log.info("test %d", 456);
 
     return 0;
 }

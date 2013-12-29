@@ -21,3 +21,4 @@
 
 add_subdirectory(Application)
 add_subdirectory(Configuration)
+add_subdirectory(Logger)

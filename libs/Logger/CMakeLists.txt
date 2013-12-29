@@ -31,12 +31,17 @@ endif()
 
 file(GLOB_RECURSE LIBRARY_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/ ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp)
 
+link_directories(${Boost_LIBRARY_DIRS} ${MOCCPPLIB_LIBRARIES})
+
 include_directories(
   ${CMAKE_BINARY_DIR}
   ${Boost_INCLUDE_DIRS}
   ${MOCCPPLIB_INCLUDES}
   ${CMAKE_SOURCE_DIR}/libs
 )
+
+add_definitions( ${Boost_LIB_DIAGNOSTIC_DEFINITIONS} )
+add_definitions( -DBOOST_ALL_DYN_LINK )
 
 add_library(${LIBRARY_NAME} SHARED
   ${LIBRARY_SRCS}
@@ -65,4 +70,4 @@ set_target_properties(${LIBRARY_NAME} PROPERTIES COMPILE_FLAGS
   "${LIBRARY_COMPILE_FLAGS}"
 )
 
-target_link_libraries(${LIBRARY_NAME} mctconfig)
+target_link_libraries(${LIBRARY_NAME} moccpp mctconfig)
