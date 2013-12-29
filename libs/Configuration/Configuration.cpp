@@ -32,7 +32,11 @@
 namespace mct
 {
 
+#if defined(WIN32)
 const std::string Configuration::default_config_filename = "mct.cfg";
+#else
+const std::string Configuration::default_config_filename = "/etc/mct.cfg";
+#endif
 
 Configuration::Configuration(int argc, char** argv)
  : m_argc(argc), m_argv(argv),

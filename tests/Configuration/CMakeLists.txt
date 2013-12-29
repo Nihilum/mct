@@ -28,7 +28,7 @@ set(TEST_SRCS
 
 SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
 SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE) 
-SET(CMAKE_INSTALL_RPATH "\$ORIGIN")
+SET(CMAKE_INSTALL_RPATH "\$ORIGIN/../lib")
 SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
 
 if(NOT DEFINED WIN32)
@@ -64,7 +64,7 @@ add_executable(${TEST_NAME} ${TEST_SRCS})
 if(WIN32)
   target_link_libraries(${TEST_NAME} mctconfig ${MOCCPP_LIB} ${CPPUNIT_LIBRARY})
 else()
-  target_link_libraries(${TEST_NAME} mctconfig ${MOCCPP_LIB} ${CPPUNIT_LIBRARY} boost_program_options)
+  target_link_libraries(${TEST_NAME} mctconfig ${MOCCPP_LIB} ${CPPUNIT_LIBRARY} boost_program_options boost_system boost_filesystem)
 endif()
 
 install(TARGETS ${TEST_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/tests)

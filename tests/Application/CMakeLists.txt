@@ -28,7 +28,7 @@ set(TEST_SRCS
 
 SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
 SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE) 
-SET(CMAKE_INSTALL_RPATH "\$ORIGIN")
+SET(CMAKE_INSTALL_RPATH "\$ORIGIN/../lib")
 SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
 
 if(NOT DEFINED WIN32)
@@ -47,6 +47,7 @@ include_directories(
 
 add_definitions( ${Boost_LIB_DIAGNOSTIC_DEFINITIONS} )
 add_definitions( -DBOOST_ALL_DYN_LINK )
+add_definitions( -DBOOST_LOG_DYN_LINK )
 add_definitions( -DBOOST_FILESYSTEM_NO_DEPRECATED )
 
 if(WIN32)
@@ -57,14 +58,12 @@ else()
   set(PROGRAM_COMPILE_FLAGS ${PROGRAM_COMPILE_FLAGS} "-std=c++11")
 endif()
 
-link_directories(${Boost_LIBRARY_DIRS})
-
 add_executable(${TEST_NAME} ${TEST_SRCS})
 
 if(WIN32)
-  target_link_libraries(${TEST_NAME} mctapp mctconfig ${MOCCPP_LIB} ${CPPUNIT_LIBRARY})
+  target_link_libraries(${TEST_NAME} mctapp mctconfig mctlog ${MOCCPP_LIB} ${CPPUNIT_LIBRARY})
 else()
-  target_link_libraries(${TEST_NAME} mctapp mctconfig ${MOCCPP_LIB} ${CPPUNIT_LIBRARY} boost_program_options)
+  target_link_libraries(${TEST_NAME} mctapp mctconfig mctlog ${MOCCPP_LIB} ${CPPUNIT_LIBRARY} boost_program_options boost_log boost_filesystem boost_system)
 endif()
 
 install(TARGETS ${TEST_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/tests)

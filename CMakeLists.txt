@@ -71,6 +71,10 @@ option(BOOST_VERSION "Used boost version (for example 1.54.0)" 0)
 message(STATUS "Looking for Boost...")
 MSource_FindBoost(${BOOST_PATH} ${BOOST_VERSION})
 
+if (NOT DEFINED WIN32)
+  file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/etc)
+endif()
+
 configure_file(
   ${CMAKE_SOURCE_DIR}/include/config.hpp.in
   ${CMAKE_BINARY_DIR}/config.hpp
@@ -87,7 +91,7 @@ set(MCT_SRCS ${CMAKE_SOURCE_DIR}/src/main.cpp)
 
 SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
 SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE) 
-SET(CMAKE_INSTALL_RPATH "\$ORIGIN/lib")
+SET(CMAKE_INSTALL_RPATH "\$ORIGIN/../lib")
 SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
 
 if(NOT DEFINED WIN32)
@@ -131,7 +135,11 @@ else()
   )
 endif()
 
-install(TARGETS mct DESTINATION ${CMAKE_INSTALL_PREFIX})
+if (DEFINED WIN32)
+  install(TARGETS mct DESTINATION ${CMAKE_INSTALL_PREFIX})
+else()
+  install(TARGETS mct DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+endif()
 
 # Install Boost Libraries and moccpp Library if on Windows
 if (DEFINED WIN32)
@@ -167,6 +175,12 @@ if (DEFINED WIN32)
   if (CPPUNIT_INCLUDES AND CPPUNIT_LIBRARY)
     install(FILES ${MOCCPPLIB_LIBRARY_INSTALL_PATH} DESTINATION ${CMAKE_INSTALL_PREFIX}/tests)
   endif()
+
+# Install moccpp Library on linux and prepare ./etc directory
+else()
+  file(TO_CMAKE_PATH "${MOCCPPLIB_LIBRARIES}/libmoccpp.so" MOCCPPLIB_LIBRARY_INSTALL_PATH)
+  install(FILES ${MOCCPPLIB_LIBRARY_INSTALL_PATH} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+  install(DIRECTORY "${CMAKE_BINARY_DIR}/etc" DESTINATION "${CMAKE_INSTALL_PREFIX}")
 endif()
 
 set_target_properties(mct PROPERTIES COMPILE_FLAGS
