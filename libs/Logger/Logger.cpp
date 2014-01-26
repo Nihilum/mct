@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2013 Mateusz Kolodziejski
+ * Copyright (c) 2013-2014 Mateusz Kolodziejski
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -28,6 +28,7 @@
  */
 
 #include <iostream>
+#include <stdexcept>
 
 #include <boost/shared_ptr.hpp>
 
@@ -180,6 +181,8 @@ void formatting_setup(boost::shared_ptr<T>& pSink, const std::string& log_format
         sev_lev = mct::error;
     } else if (severity == std::string("fatal")) {
         sev_lev = mct::fatal;
+    } else {
+        throw std::runtime_error(std::string("Invalid log severity: '") + severity + std::string("'"));
     }
 
     pSink->set_formatter(expr::stream

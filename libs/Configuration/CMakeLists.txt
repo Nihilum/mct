@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 #
-# Copyright (c) 2013 Mateusz Kolodziejski
+# Copyright (c) 2013-2014 Mateusz Kolodziejski
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
 # this software and associated documentation files (the "Software"), to deal in
@@ -23,7 +23,8 @@ set(LIBRARY_NAME mctconfig)
 
 if(WIN32)
   # Disable dll-external warnings for Visual Studio; [/GS-] disable buffer overflow security checks (optimization)
-  set(LIBRARY_COMPILE_FLAGS ${LIBRARY_COMPILE_FLAGS} "-DMCT_CONFIGURATION_DLL=1 /wd4251 /wd4275 /GS-")
+  # Boost.Asio needs to know windows version [0x0501 - WinXP minimum]
+  set(LIBRARY_COMPILE_FLAGS ${LIBRARY_COMPILE_FLAGS} "-DMCT_CONFIGURATION_DLL=1 /wd4251 /wd4275 /GS- -D_WIN32_WINNT=0x0501")
 else()
   # Activate C++11 mode for GNU/GCC
   set(LIBRARY_COMPILE_FLAGS ${LIBRARY_COMPILE_FLAGS} "-std=c++11 -DMCT_CONFIGURATION_DLL=1")

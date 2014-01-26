@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 #
-# Copyright (c) 2013 Mateusz Kolodziejski
+# Copyright (c) 2013-2014 Mateusz Kolodziejski
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
 # this software and associated documentation files (the "Software"), to deal in
@@ -66,7 +66,7 @@ endif()
 option(CPPUNIT_INCLUDES "Path where CPPUNIT Library includes can be found" 0)
 option(CPPUNIT_LIBRARY "Path where CPPUNIT Library static can be found" 0)
 option(BOOST_PATH "Path to boost installation" 0)
-option(BOOST_VERSION "Used boost version (for example 1.54.0)" 0)
+option(BOOST_VERSION "Used boost version (for example 1.55.0)" 0)
 
 message(STATUS "Looking for Boost...")
 MSource_FindBoost(${BOOST_PATH} ${BOOST_VERSION})
@@ -112,8 +112,9 @@ add_definitions( -DBOOST_ALL_DYN_LINK )
 add_definitions( -DBOOST_FILESYSTEM_NO_DEPRECATED )
 
 if(WIN32)
-  # Disable dll-external warnings for Visual Studio; [/GS-] disable buffer overflow security checks (optimization) 
-  set(PROGRAM_COMPILE_FLAGS ${PROGRAM_COMPILE_FLAGS} "/wd4251 /GS-")
+  # Disable dll-external warnings for Visual Studio; [/GS-] disable buffer overflow security checks (optimization);
+  # Boost.Asio needs to know windows version [0x0501 - WinXP minimum]
+  set(PROGRAM_COMPILE_FLAGS ${PROGRAM_COMPILE_FLAGS} "/wd4251 /GS- -D_WIN32_WINNT=0x0501")
 else()
   # Activate C++11 mode for GNU/GCC
   set(PROGRAM_COMPILE_FLAGS ${PROGRAM_COMPILE_FLAGS} "-std=c++11")

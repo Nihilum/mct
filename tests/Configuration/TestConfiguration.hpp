@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2013 Mateusz Kolodziejski
+ * Copyright (c) 2013-2014 Mateusz Kolodziejski
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -75,6 +75,14 @@ class TestConfiguration : public CPPUNIT_NS::TestCase
     CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_log_rotate_all_files_max_size);
     CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cmd_log_rotate_min_free_space);
     CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_log_rotate_min_free_space);
+    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cmd_mode_proxy_local_port);
+    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_local_port);
+    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cmd_mode_proxy_remote_port);
+    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_remote_port);
+    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cmd_mode_proxy_local_host);
+    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_local_host);
+    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cmd_mode_proxy_remote_host);
+    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_remote_host);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -116,6 +124,14 @@ protected:
     void test_ConfigurationBuilder_build_configuration_load_cfg_log_rotate_all_files_max_size();
     void test_ConfigurationBuilder_build_configuration_load_cmd_log_rotate_min_free_space();
     void test_ConfigurationBuilder_build_configuration_load_cfg_log_rotate_min_free_space();
+    void test_ConfigurationBuilder_build_configuration_load_cmd_mode_proxy_local_port();
+    void test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_local_port();
+    void test_ConfigurationBuilder_build_configuration_load_cmd_mode_proxy_remote_port();
+    void test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_remote_port();
+    void test_ConfigurationBuilder_build_configuration_load_cmd_mode_proxy_local_host();
+    void test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_local_host();
+    void test_ConfigurationBuilder_build_configuration_load_cmd_mode_proxy_remote_host();
+    void test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_remote_host();
 };
 
 #endif // MCT_TESTS_CONFIGURATION_TEST_CONFIGURATION_HPP

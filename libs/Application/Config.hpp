@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2013 Mateusz Kolodziejski
+ * Copyright (c) 2013-2014 Mateusz Kolodziejski
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -52,7 +52,7 @@
 #else
   #if __GNUC__ >= 4
     #define MCT_APPLICATION_DLL_PUBLIC __attribute__ ((visibility ("default")))
-    #define MOCCPP_DLL_LOCAL  __attribute__ ((visibility ("hidden")))
+    #define MCT_APPLICATION_DLL_LOCAL  __attribute__ ((visibility ("hidden")))
   #else
     #define MCT_APPLICATION_DLL_PUBLIC
     #define MCT_APPLICATION_DLL_LOCAL

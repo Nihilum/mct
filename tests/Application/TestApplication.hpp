@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2013 Mateusz Kolodziejski
+ * Copyright (c) 2013-2014 Mateusz Kolodziejski
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -41,9 +41,10 @@
 class TestApplication : public CPPUNIT_NS::TestCase
 {
     CPPUNIT_TEST_SUITE(TestApplication);
-    CPPUNIT_TEST(test_init_configuration);
-    CPPUNIT_TEST(test_init_logger);
-    CPPUNIT_TEST(test_run);
+    CPPUNIT_TEST(test_init_configuration_failed);
+    CPPUNIT_TEST(test_special_mode);
+    CPPUNIT_TEST(test_init_logger_failed);
+    CPPUNIT_TEST(test_cannot_find_app_mode);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -51,9 +52,10 @@ public:
     void tearDown();
 
 protected:
-    void test_init_configuration();
-    void test_init_logger();
-    void test_run();
+    void test_init_configuration_failed();
+    void test_special_mode();
+    void test_init_logger_failed();
+    void test_cannot_find_app_mode();
 };
 
 #endif // MCT_TESTS_APPLICATION_TEST_APPLICATION_HPP

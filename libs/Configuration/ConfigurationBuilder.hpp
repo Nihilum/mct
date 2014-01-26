@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2013 Mateusz Kolodziejski
+ * Copyright (c) 2013-2014 Mateusz Kolodziejski
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -24,7 +24,7 @@
 /**
  * @file Configuration/ConfigurationBuilder.hpp
  *
- * @desc Class used to parse the configuration file into Configuration class.
+ * @desc Class used to parse the configuration file and construct Configuration class.
  */
 
 #ifndef MCT_CONFIGURATION_CONFIGURATION_BUILDER_HPP

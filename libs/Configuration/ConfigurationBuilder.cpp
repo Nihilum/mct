@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2013 Mateusz Kolodziejski
+ * Copyright (c) 2013-2014 Mateusz Kolodziejski
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -24,7 +24,7 @@
 /**
  * @file Configuration/ConfigurationBuilder.cpp
  *
- * @desc Class used to parse the configuration file into Configuration class.
+ * @desc Class used to parse the configuration file and construct Configuration class.
  */
 
 #include <fstream>
@@ -123,9 +123,9 @@ bool ConfigurationBuilder::setup_config_fields(
 
         // Options allowed with the command line and the config file
         po_config.add_options()
-            ("mode", po::value<std::string>(&m_config.m_mode)->default_value("ggclient"),
+            ("mode", po::value<std::string>(&m_config.m_mode)->default_value("proxy"),
                   "specifies the way the application is going to operate\n"
-                  "possible modes: ggserver, ggclient")
+                  "possible modes: proxy")
             ("log.silent", po::value<bool>(&m_config.m_log_silent)->default_value(false),
                   "should logger be completely silent")
             ("log.nofile", po::value<bool>(&m_config.m_log_nofile)->default_value(false),
@@ -158,6 +158,14 @@ bool ConfigurationBuilder::setup_config_fields(
                   "maximum size (in bytes) of all the rotating log files combined")
             ("log.rotate.min_free_space", po::value<uint64_t>(&m_config.m_log_rotate_min_free_space)->default_value(1073741824),
                   "minimum free disk space (in bytes) to run rotating log files")
+            ("mode.proxy.local_port", po::value<uint16_t>(&m_config.m_mode_proxy_local_port)->default_value(0),
+                  "local port to bind to in proxy mode")
+            ("mode.proxy.remote_port", po::value<uint16_t>(&m_config.m_mode_proxy_remote_port)->default_value(0),
+                  "remote port to send to in proxy mode")
+            ("mode.proxy.local_host", po::value<std::string>(&m_config.m_mode_proxy_local_host)->default_value("localhost"),
+                  "local interface to bind to in proxy mode")
+            ("mode.proxy.remote_host", po::value<std::string>(&m_config.m_mode_proxy_remote_host)->default_value("localhost"),
+                  "remote host to send to in proxy mode")
             ;
 
         // Hidden options allowed with the command line and the config file

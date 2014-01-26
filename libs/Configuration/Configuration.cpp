@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2013 Mateusz Kolodziejski
+ * Copyright (c) 2013-2014 Mateusz Kolodziejski
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -39,9 +39,10 @@ const std::string Configuration::default_config_filename = "/etc/mct.cfg";
 #endif
 
 Configuration::Configuration(int argc, char** argv)
- : m_argc(argc), m_argv(argv),
+ : m_argc(argc), m_argv(argv), m_app_name(m_argv[0]),
  m_log_silent(false), m_log_nofile(false), m_log_rotate(false),
- m_log_rotate_size(0), m_log_rotate_all_files_max_size(0), m_log_rotate_min_free_space(0)
+ m_log_rotate_size(0), m_log_rotate_all_files_max_size(0), m_log_rotate_min_free_space(0),
+ m_mode_proxy_local_port(0), m_mode_proxy_remote_port(0)
 {
 }
 

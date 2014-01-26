@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2013 Mateusz Kolodziejski
+ * Copyright (c) 2013-2014 Mateusz Kolodziejski
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -47,10 +47,13 @@ public:
     Configuration(int argc, char** argv);
     ~Configuration();
 
+    Configuration(const Configuration&) = delete;
+    Configuration& operator=(const Configuration&) = delete;
+
     int get_app_argument_count() const { return m_argc; }
     const char** get_app_argument_array() const { return (const char**)m_argv; }
 
-    const std::string& get_app_name() const { static std::string app_name(m_argv[0]); return app_name; }
+    const std::string& get_app_name() const { return m_app_name; }
     const std::string& get_config_filename() const { return m_config_filename; }
     const std::string& get_app_mode() const { return m_mode; }
     bool get_log_silent() const { return m_log_silent; }
@@ -65,6 +68,10 @@ public:
     const std::string& get_log_rotate_filename() const { return m_log_rotate_filename; }
     uint64_t get_log_rotate_all_files_max_size() const { return m_log_rotate_all_files_max_size; }
     uint64_t get_log_rotate_min_free_space() const { return m_log_rotate_min_free_space; }
+    uint16_t get_mode_proxy_local_port() const { return m_mode_proxy_local_port; }
+    uint16_t get_mode_proxy_remote_port() const { return m_mode_proxy_remote_port; }
+    const std::string& get_mode_proxy_local_host() const { return m_mode_proxy_local_host; }
+    const std::string& get_mode_proxy_remote_host() const { return m_mode_proxy_remote_host; }
 
     void set_config_filename(const std::string& filename) { m_config_filename = filename; }
     void set_app_mode(const std::string& mode) { m_mode = mode; }
@@ -87,6 +94,7 @@ protected:
     int m_argc;
     char** m_argv;
 
+    std::string m_app_name;
     std::string m_config_filename;
     std::string m_mode;
     std::string m_log_directory;
@@ -95,6 +103,8 @@ protected:
     std::string m_log_severity_console;
     std::string m_log_severity_file;
     std::string m_log_rotate_filename;
+    std::string m_mode_proxy_local_host;
+    std::string m_mode_proxy_remote_host;
 
     bool m_log_silent;
     bool m_log_nofile;
@@ -103,6 +113,9 @@ protected:
     uint64_t m_log_rotate_size;
     uint64_t m_log_rotate_all_files_max_size;
     uint64_t m_log_rotate_min_free_space;
+
+    uint16_t m_mode_proxy_local_port;
+    uint16_t m_mode_proxy_remote_port;
 };
 
 }

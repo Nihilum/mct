@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2013 Mateusz Kolodziejski
+ * Copyright (c) 2013-2014 Mateusz Kolodziejski
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -27,6 +27,9 @@
  * @desc Application entry point tests.
  */
 
+#include <vector>
+#include <sstream>
+
 #include <cppunit/CompilerOutputter.h>
 #include <cppunit/ui/text/TestRunner.h>
 
@@ -36,6 +39,30 @@
 
 #include "TestApplication.hpp"
 
+class ConfigFileHandler
+{
+public:
+    ConfigFileHandler(const std::string& filename, const std::vector<std::string>& keys_values, const int argc, const char** argv)
+    : m_filename(filename)
+    {
+        m_fileGuard = std::shared_ptr<std::ofstream>(&m_fs, [&](std::ofstream*) { boost::filesystem::remove(m_filename); });
+
+        m_fs.open(m_filename);
+        for (auto& key_value : keys_values) {
+            m_fs << "#" << std::endl;
+            m_fs << "# Standard comment support" << std::endl;
+            m_fs << "#" << std::endl;
+            m_fs << key_value << std::endl << std::endl;
+        }
+        m_fs.close();
+    }
+
+private:
+    std::string m_filename;
+    std::ofstream m_fs;
+    std::shared_ptr<std::ofstream> m_fileGuard;
+};
+
 void TestApplication::setUp()
 {
 }
@@ -44,59 +71,90 @@ void TestApplication::tearDown()
 {
 }
 
-void TestApplication::test_init_configuration()
+void TestApplication::test_init_configuration_failed()
 {
-    std::cout << std::endl;
-    const int argc = 1;
-    const char* argv[argc] = { "mct" };
-    const bool expected_return_value = false;
-    const std::string expected_message("Could not open 'mct.cfg' file");
-    std::string str_error;
-    mct::Application app(argc, (char**)argv);
+    const int argc = 3;
+    const char* argv[argc] = { "mct", "-c", "invalid.cfg" };
+    const int expected_return_value = 1;
+    const std::string expected_message("[Application::run()] init_configuration failed.\nError: Could not open 'invalid.cfg' file\n");
 
-    CPPUNIT_ASSERT_EQUAL(expected_return_value, app.init_configuration(str_error));
-    CPPUNIT_ASSERT_EQUAL(expected_message, str_error);
+    std::streambuf* prevstr = std::cerr.rdbuf();
+    std::ostringstream sStr;
+    std::cerr.rdbuf(sStr.rdbuf());
+
+    mct::Application app(argc, (char**)argv);
+    const int return_value = app.run();
+
+    std::cerr.rdbuf(prevstr);
+
+    CPPUNIT_ASSERT_EQUAL(expected_return_value, return_value);
+    CPPUNIT_ASSERT_EQUAL(expected_message, sStr.str());
 }
 
-void TestApplication::test_init_logger()
+void TestApplication::test_special_mode()
 {
-    std::cout << std::endl;
-    std::string filename("./tai_logger.cfg");
-    std::ofstream fs;
-    std::shared_ptr<std::ofstream> fileGuard(&fs, [&](std::ofstream*)
-    {
-        boost::filesystem::remove(filename);
-    });
+    const int argc = 2;
+    const char* argv[argc] = { "mct", "-v" };
+    const int expected_return_value = 0;
+    const std::string expected_message("Mattsource's Connection Tunneler v. 0.1.0-dev\n\n");
 
-    fs.open(filename);
-    fs << "#" << std::endl;
-    fs << "# Standard comment support" << std::endl;
-    fs << "#" << std::endl;
-    fs << "mode = ggserver" << std::endl;
-    fs.close();
+    std::streambuf* prevstr = std::cout.rdbuf();
+    std::ostringstream sStr;
+    std::cout.rdbuf(sStr.rdbuf());
 
+    mct::Application app(argc, (char**)argv);
+    const int return_value = app.run();
+
+    std::cout.rdbuf(prevstr);
+
+    CPPUNIT_ASSERT_EQUAL(expected_return_value, return_value);
+    CPPUNIT_ASSERT_EQUAL(expected_message, sStr.str());
+}
+
+void TestApplication::test_init_logger_failed()
+{
+    const std::string filename("ta_init_logger_failed.cfg");
     const int argc = 3;
     const char* argv[argc] = { "mct", "-c", filename.c_str() };
-    const bool expected_return_value = true;
-    const std::string expected_message("Mattsource's Connection Tunneler v. 0.1.0-dev");
-    std::string message_to_user;
-    mct::Application app (argc, (char**)argv);
+    const int expected_return_value = 1;
+    const std::string expected_message("[Application::run()] init_logger failed.\nError: Invalid log severity: 'super'\n");
 
-    CPPUNIT_ASSERT_EQUAL(expected_return_value, app.init_configuration(message_to_user));
-    CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
-    CPPUNIT_ASSERT_EQUAL(expected_return_value, app.init_logger(message_to_user));
-    CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
+    ConfigFileHandler cfg_file_hdl(filename, { "log.severity.console = super" }, argc, argv);
+
+    std::streambuf* prevstr = std::cerr.rdbuf();
+    std::ostringstream sStr;
+    std::cerr.rdbuf(sStr.rdbuf());
+
+    mct::Application app(argc, (char**)argv);
+    const int return_value = app.run();
+
+    std::cerr.rdbuf(prevstr);
+
+    CPPUNIT_ASSERT_EQUAL(expected_return_value, return_value);
+    CPPUNIT_ASSERT_EQUAL(expected_message, sStr.str());
 }
 
-void TestApplication::test_run()
+void TestApplication::test_cannot_find_app_mode()
 {
-    std::cout << std::endl;
-    const int argc = 2;
-    const char* argv[argc] = { "mct", "-c" };
+    const std::string filename("ta_cannot_find_app_mode.cfg");
+    const int argc = 3;
+    const char* argv[argc] = { "mct", "-c", filename.c_str() };
     const int expected_return_value = 1;
+    const std::string expected_message("Cannot find application mode 'none'");
+
+    ConfigFileHandler cfg_file_hdl(filename, { "mode = none" }, argc, argv);
+
+    std::streambuf* prevstr = std::clog.rdbuf();
+    std::ostringstream sStr;
+    std::clog.rdbuf(sStr.rdbuf());
+
     mct::Application app(argc, (char**)argv);
-    int ret = app.run();
-    CPPUNIT_ASSERT_EQUAL(expected_return_value, ret);
+    const int return_value = app.run();
+
+    std::clog.rdbuf(prevstr);
+
+    CPPUNIT_ASSERT_EQUAL(expected_return_value, return_value);
+    CPPUNIT_ASSERT_EQUAL(true, sStr.str().find(expected_message) != std::string::npos);
 }
 
 CPPUNIT_TEST_SUITE_REGISTRATION(TestApplication);
