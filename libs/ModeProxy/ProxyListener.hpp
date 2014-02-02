@@ -35,7 +35,29 @@
 #include <vector>
 #include <cstdint>
 
-#include <boost/asio.hpp>
+namespace boost
+{
+    namespace system
+    {
+        class error_code;
+    }
+
+    namespace asio
+    {
+        class io_service;
+
+        namespace ip
+        {
+            class tcp;
+        }
+
+        template <typename Protocol>
+        class socket_acceptor_service;
+
+		template <typename Protocol, typename SocketAcceptorService = socket_acceptor_service<Protocol> >
+		class basic_socket_acceptor;
+    }
+}
 
 namespace mct
 {
@@ -75,7 +97,7 @@ protected:
 
 	bool m_is_dead;
 
-	boost::asio::ip::tcp::acceptor m_acceptor;
+	std::unique_ptr< boost::asio::basic_socket_acceptor<boost::asio::ip::tcp> > m_acceptor;
 
 	std::mutex m_sessions_access;
 	std::vector< std::shared_ptr< Proxy > > m_sessions;

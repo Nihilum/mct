@@ -32,6 +32,8 @@
 #include <cstdlib>
 #include <cstddef>
 
+#include <boost/asio/io_service.hpp>
+
 #include <Logger/Logger.hpp>
 #include <Configuration/Configuration.hpp>
 

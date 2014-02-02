@@ -34,7 +34,29 @@
 #include <memory>
 #include <cstdint>
 
-#include <boost/asio.hpp>
+namespace boost
+{
+    namespace system
+    {
+        class error_code;
+    }
+
+    namespace asio
+    {
+        class io_service;
+
+        namespace ip
+        {
+            class tcp;
+        }
+
+        template <typename Protocol>
+        class stream_socket_service;
+
+        template <typename Protocol, typename StreamSocketService = stream_socket_service<Protocol> >
+        class basic_stream_socket;
+    }
+}
 
 namespace mct
 {
@@ -47,8 +69,8 @@ public:
     Proxy(Logger& logger, boost::asio::io_service& ios, const std::string& remote_host, uint16_t remote_port);
     ~Proxy();
 
-    boost::asio::ip::tcp::socket& get_client_socket() { return m_client_socket; }
-    boost::asio::ip::tcp::socket& get_remote_socket() { return m_remote_socket; }
+    const std::unique_ptr< boost::asio::basic_stream_socket<boost::asio::ip::tcp> >& get_client_socket() const { return m_client_socket; }
+    const std::unique_ptr< boost::asio::basic_stream_socket<boost::asio::ip::tcp> >& get_remote_socket() const { return m_remote_socket; }
 
     bool has_started() const { return m_has_started; }
 
@@ -78,8 +100,8 @@ protected:
     unsigned char m_remote_data[m_max_data_length];
     unsigned char m_client_data[m_max_data_length];
 
-    boost::asio::ip::tcp::socket m_client_socket;
-    boost::asio::ip::tcp::socket m_remote_socket;
+    std::unique_ptr< boost::asio::basic_stream_socket<boost::asio::ip::tcp> > m_client_socket;
+    std::unique_ptr< boost::asio::basic_stream_socket<boost::asio::ip::tcp> > m_remote_socket;
 
     bool m_has_started;
     std::mutex m_mutex;
