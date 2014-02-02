@@ -31,8 +31,8 @@
 
 #include <functional>
 
-#include <boost/asio/basic_socket_acceptor.hpp>
-#include <boost/asio/ip/tcp.hpp>
+#include <Asio/basic_socket_acceptor.hpp>
+#include <Asio/ip/tcp.hpp>
 
 #include <Logger/Logger.hpp>
 #include <ModeProxy/Proxy.hpp>

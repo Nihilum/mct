@@ -32,11 +32,10 @@
 #include <cstdlib>
 #include <cstddef>
 
-#include <boost/asio/io_service.hpp>
-
 #include <Logger/Logger.hpp>
 #include <Configuration/Configuration.hpp>
 
+#include <Asio/io_service.hpp>
 #include <ModeProxy/ModeProxy.hpp>
 #include <ModeProxy/ProxyManager.hpp>
 #include <ModeProxy/ProxyListener.hpp>
