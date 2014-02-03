@@ -26,6 +26,8 @@
  *
  */
 
+#define BOOST_ASIO_SOURCE
+
 #include <Asio/detail/winsock_init.hpp>
 
 namespace boost {

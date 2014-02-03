@@ -26,6 +26,8 @@
  *
  */
 
+#define BOOST_ASIO_SOURCE
+
 #include <Asio/error.hpp>
 
 const boost::system::error_category& system_category = boost::asio::error::get_system_category();
