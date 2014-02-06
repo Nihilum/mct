@@ -62,10 +62,31 @@ public:
         });
 
         fs.open(m_filename);
-        fs << "#" << std::endl;
-        fs << "# Standard comment support" << std::endl;
-        fs << "#" << std::endl;
-        fs << m_key << " = " << given_default << std::endl;
+
+        auto insert_value = [&] (const std::string& val) {
+            fs << "#" << std::endl;
+            fs << "# Standard comment support" << std::endl;
+            fs << "#" << std::endl;
+            fs << m_key << " = " << val << std::endl;
+        };
+
+        size_t start_pos = 0;
+        size_t sep_pos = given_default.find(" ", start_pos);
+
+        if (sep_pos == std::string::npos) {
+            insert_value(given_default);
+        } else {
+            while (sep_pos != std::string::npos) {
+                insert_value(given_default.substr(start_pos, sep_pos - start_pos));
+                start_pos = ++sep_pos;
+                sep_pos = given_default.find(" ", start_pos);
+
+                if (sep_pos == std::string::npos) {
+                    insert_value(given_default.substr(start_pos, given_default.length() - start_pos));
+                }
+            }
+        }
+
         fs.close();
 
         mct::ConfigurationBuilder config_builder(m_config);
@@ -274,30 +295,30 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_generate()
                                    "# log.rotate.min_free_space =\n\n"
 
                                    "#\n"
-                                   "# local port to bind to in proxy mode\n"
+                                   "# a set of local ports to bind to in proxy mode, separated by spaces\n"
                                    "#\n"
-                                   "# Default: 0\n\n"
+                                   "# Default: 8080\n\n"
 
                                    "# mode.proxy.local_port =\n\n"
 
                                    "#\n"
-                                   "# remote port to send to in proxy mode\n"
+                                   "# a set of remote ports to send to in proxy mode, separated by spaces\n"
                                    "#\n"
-                                   "# Default: 0\n\n"
+                                   "# Default: 80\n\n"
 
                                    "# mode.proxy.remote_port =\n\n"
 
                                    "#\n"
-                                   "# local interface to bind to in proxy mode\n"
+                                   "# a set of local interfaces to bind to in proxy mode, separated by spaces\n"
                                    "#\n"
                                    "# Default: localhost\n\n"
 
                                    "# mode.proxy.local_host =\n\n"
 
                                    "#\n"
-                                   "# remote host to send to in proxy mode\n"
+                                   "# a set of remote hosts to send to in proxy mode, separated by spaces\n"
                                    "#\n"
-                                   "# Default: localhost\n\n"
+                                   "# Default: 127.0.0.1\n\n"
 
                                    "# mode.proxy.remote_host =";
 
@@ -334,10 +355,10 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_show_optio
         "--log.rotate.filename: %Y%m%d_%H%M%S_%5N-mct.log\n"
         "--log.rotate.all_files_max_size: 1073741824\n"
         "--log.rotate.min_free_space: 1073741824\n"
-        "--mode.proxy.local_port: 0\n"
-        "--mode.proxy.remote_port: 0\n"
-        "--mode.proxy.local_host: localhost\n"
-        "--mode.proxy.remote_host: localhost\n"
+        "--mode.proxy.local_port: \n"
+        "--mode.proxy.remote_port: \n"
+        "--mode.proxy.local_host: \n"
+        "--mode.proxy.remote_host: \n"
         "Mattsource's Connection Tunneler v. 0.1.0-dev"
         ;
 
@@ -869,7 +890,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_m
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("7543", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
-    CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_mode_proxy_local_port());
+    CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_mode_proxy_local_ports()[0]);
 }
 
 void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_local_port()
@@ -888,7 +909,28 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_m
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("6513", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
-    CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_mode_proxy_local_port());
+    CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_mode_proxy_local_ports()[0]);
+}
+
+void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_local_port_multiple()
+{
+    std::string param("mode.proxy.local_port");
+    std::string filename("./tbc_mode_proxy_local_port.cfg");
+    uint16_t expected_value_1 = 6513;
+    uint16_t expected_value_2 = 6514;
+    std::string expected_message("Mattsource's Connection Tunneler v. 0.1.0-dev");
+    std::string message_to_user;
+    const bool expected_return_value = true;
+
+    const int argc = 3;
+    const char* argv[argc] = { "mct", "-c", filename.c_str() };
+
+    ConfigFileReaderHelper helper(filename, param, argc, argv);
+
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("6513 6514", message_to_user));
+    CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
+    CPPUNIT_ASSERT_EQUAL(expected_value_1, helper.get_config().get_mode_proxy_local_ports()[0]);
+    CPPUNIT_ASSERT_EQUAL(expected_value_2, helper.get_config().get_mode_proxy_local_ports()[1]);
 }
 
 void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_mode_proxy_remote_port()
@@ -908,7 +950,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_m
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("7543", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
-    CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_mode_proxy_remote_port());
+    CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_mode_proxy_remote_ports()[0]);
 }
 
 void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_remote_port()
@@ -927,7 +969,28 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_m
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("6513", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
-    CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_mode_proxy_remote_port());
+    CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_mode_proxy_remote_ports()[0]);
+}
+
+void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_remote_port_multiple()
+{
+    std::string param("mode.proxy.remote_port");
+    std::string filename("./tbc_mode_proxy_remote_port.cfg");
+    uint16_t expected_value_1 = 6513;
+    uint16_t expected_value_2 = 6514;
+    std::string expected_message("Mattsource's Connection Tunneler v. 0.1.0-dev");
+    std::string message_to_user;
+    const bool expected_return_value = true;
+
+    const int argc = 3;
+    const char* argv[argc] = { "mct", "-c", filename.c_str() };
+
+    ConfigFileReaderHelper helper(filename, param, argc, argv);
+
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("6513 6514", message_to_user));
+    CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
+    CPPUNIT_ASSERT_EQUAL(expected_value_1, helper.get_config().get_mode_proxy_remote_ports()[0]);
+    CPPUNIT_ASSERT_EQUAL(expected_value_2, helper.get_config().get_mode_proxy_remote_ports()[1]);
 }
 
 void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_mode_proxy_local_host()
@@ -947,7 +1010,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_m
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("localhost", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
-    CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_mode_proxy_local_host());
+    CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_mode_proxy_local_hosts()[0]);
 }
 
 void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_local_host()
@@ -966,7 +1029,28 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_m
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("127.0.0.1", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
-    CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_mode_proxy_local_host());
+    CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_mode_proxy_local_hosts()[0]);
+}
+
+void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_local_host_multiple()
+{
+    std::string param("mode.proxy.local_host");
+    std::string filename("./tbc_mode_proxy_local_host.cfg");
+    std::string expected_value_1 = "127.0.0.1";
+    std::string expected_value_2 = "0.0.0.0";
+    std::string expected_message("Mattsource's Connection Tunneler v. 0.1.0-dev");
+    std::string message_to_user;
+    const bool expected_return_value = true;
+
+    const int argc = 3;
+    const char* argv[argc] = { "mct", "-c", filename.c_str() };
+
+    ConfigFileReaderHelper helper(filename, param, argc, argv);
+
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("127.0.0.1 0.0.0.0", message_to_user));
+    CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
+    CPPUNIT_ASSERT_EQUAL(expected_value_1, helper.get_config().get_mode_proxy_local_hosts()[0]);
+    CPPUNIT_ASSERT_EQUAL(expected_value_2, helper.get_config().get_mode_proxy_local_hosts()[1]);
 }
 
 void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_mode_proxy_remote_host()
@@ -986,7 +1070,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_m
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("localhost", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
-    CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_mode_proxy_remote_host());
+    CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_mode_proxy_remote_hosts()[0]);
 }
 
 void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_remote_host()
@@ -1005,7 +1089,28 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_m
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("127.0.0.1", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
-    CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_mode_proxy_remote_host());
+    CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_mode_proxy_remote_hosts()[0]);
+}
+
+void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_remote_host_multiple()
+{
+    std::string param("mode.proxy.remote_host");
+    std::string filename("./tbc_mode_proxy_remote_host.cfg");
+    std::string expected_value_1 = "127.0.0.1";
+    std::string expected_value_2 = "0.0.0.0";
+    std::string expected_message("Mattsource's Connection Tunneler v. 0.1.0-dev");
+    std::string message_to_user;
+    const bool expected_return_value = true;
+
+    const int argc = 3;
+    const char* argv[argc] = { "mct", "-c", filename.c_str() };
+
+    ConfigFileReaderHelper helper(filename, param, argc, argv);
+
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("127.0.0.1 0.0.0.0", message_to_user));
+    CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
+    CPPUNIT_ASSERT_EQUAL(expected_value_1, helper.get_config().get_mode_proxy_remote_hosts()[0]);
+    CPPUNIT_ASSERT_EQUAL(expected_value_2, helper.get_config().get_mode_proxy_remote_hosts()[1]);
 }
 
 CPPUNIT_TEST_SUITE_REGISTRATION(TestConfiguration);

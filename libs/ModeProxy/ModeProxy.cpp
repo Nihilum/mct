@@ -31,6 +31,7 @@
 #include <memory>
 #include <cstdlib>
 #include <cstddef>
+#include <algorithm>
 
 #include <Logger/Logger.hpp>
 #include <Configuration/Configuration.hpp>
@@ -57,26 +58,74 @@ const std::string& ModeProxy::get_name() const
     return proxy_name;
 }
 
+bool ModeProxy::validate_configuration() const
+{
+    if (m_config.get_mode_proxy_local_hosts().size() != m_config.get_mode_proxy_remote_hosts().size() != m_config.get_mode_proxy_local_ports().size() != m_config.get_mode_proxy_remote_ports().size()) {
+        uint16_t lh = m_config.get_mode_proxy_local_hosts().size();
+        uint16_t rh = m_config.get_mode_proxy_remote_hosts().size();
+        uint16_t lp = m_config.get_mode_proxy_local_ports().size();
+        uint16_t rp = m_config.get_mode_proxy_remote_ports().size();
+        uint16_t max = (std::max)({lh, rh, lp, rp});
+
+        auto report_conf_problem = [&](const std::string& conf_field, uint16_t expected_val, uint16_t actual_val) {
+            m_log.fatal("There is a problem with the configuration field '%s'. Since it's a set, it should have %d entries (repeats) - while it only has %d.", conf_field.c_str(), expected_val, actual_val);
+        };
+
+        if (lh != max) {
+            report_conf_problem("mode_proxy_local_hosts", lh, max);
+        }
+
+        if (rh != max) {
+            report_conf_problem("mode_proxy_remote_hosts", rh, max);
+        }
+
+        if (lp != max) {
+            report_conf_problem("mode_proxy_local_ports", lp, max);
+        }
+
+        if (rp != max) {
+            report_conf_problem("mode_proxy_remote_ports", rp, max);
+        }
+
+        return false;
+    }
+
+    for (auto&& port : m_config.get_mode_proxy_local_ports()) {
+        if (port <= 1023) {
+            m_log.warning("One of supplied mode_proxy_local_ports: %d is a 'well-known port' (its value is <= 1023). It means that the program might need additional privileges to run correctly.", port);
+        }
+    }
+
+    return true;
+}
+
+uint16_t ModeProxy::get_num_of_all_proxies() const
+{   // since all vectors are equal (checked with validate_configuration()), return the size of the first one
+    return m_config.get_mode_proxy_local_hosts().size();
+}
+
 bool ModeProxy::run()
 {
     m_log.log_if_not_silent("Initialized mode '%s'.", get_name().c_str());
+
+    if (!validate_configuration()) {
+        return false;
+    }
 
     // provides the core I/O functionality (OS calls etc.)
     boost::asio::io_service ios;
 
     ProxyManager manager(m_log);
 
-    // const uint16_t all_proxies = m_config.get_mode_proxy_all_proxies();
-    const uint16_t all_proxies = 1;
-
+    const uint16_t num_of_all_proxies = get_num_of_all_proxies();
     {
         //HostResolver resolver(m_log);
 
-        for (uint16_t proxy_num = 0; proxy_num < all_proxies; ++proxy_num) {
-            std::string local_interface = m_config.get_mode_proxy_local_host();
-            uint16_t local_port = m_config.get_mode_proxy_local_port();
-            std::string remote_host = m_config.get_mode_proxy_remote_host();
-            uint16_t remote_port = m_config.get_mode_proxy_remote_port();
+        for (uint16_t proxy_num = 0; proxy_num < num_of_all_proxies; ++proxy_num) {
+            std::string local_interface = m_config.get_mode_proxy_local_hosts()[proxy_num];
+            uint16_t local_port = m_config.get_mode_proxy_local_ports()[proxy_num];
+            std::string remote_host = m_config.get_mode_proxy_remote_hosts()[proxy_num];
+            uint16_t remote_port = m_config.get_mode_proxy_remote_ports()[proxy_num];
 
             // local_interface = resolver.resolve(local_interface);
             // remote_host = resolver.resolve(remote_host);

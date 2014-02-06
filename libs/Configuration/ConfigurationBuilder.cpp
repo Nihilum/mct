@@ -158,14 +158,14 @@ bool ConfigurationBuilder::setup_config_fields(
                   "maximum size (in bytes) of all the rotating log files combined")
             ("log.rotate.min_free_space", po::value<uint64_t>(&m_config.m_log_rotate_min_free_space)->default_value(1073741824),
                   "minimum free disk space (in bytes) to run rotating log files")
-            ("mode.proxy.local_port", po::value<uint16_t>(&m_config.m_mode_proxy_local_port)->default_value(0),
-                  "local port to bind to in proxy mode")
-            ("mode.proxy.remote_port", po::value<uint16_t>(&m_config.m_mode_proxy_remote_port)->default_value(0),
-                  "remote port to send to in proxy mode")
-            ("mode.proxy.local_host", po::value<std::string>(&m_config.m_mode_proxy_local_host)->default_value("localhost"),
-                  "local interface to bind to in proxy mode")
-            ("mode.proxy.remote_host", po::value<std::string>(&m_config.m_mode_proxy_remote_host)->default_value("localhost"),
-                  "remote host to send to in proxy mode")
+            ("mode.proxy.local_port", po::value< std::vector<uint16_t> >(&m_config.m_mode_proxy_local_ports)->multitoken()->default_value(std::vector<uint16_t>(), "8080"),
+                  "a set of local ports to bind to in proxy mode, separated by spaces")
+            ("mode.proxy.remote_port", po::value< std::vector<uint16_t> >(&m_config.m_mode_proxy_remote_ports)->multitoken()->default_value(std::vector<uint16_t>(), "80"),
+                  "a set of remote ports to send to in proxy mode, separated by spaces")
+            ("mode.proxy.local_host", po::value< std::vector<std::string> >(&m_config.m_mode_proxy_local_hosts)->multitoken()->default_value(std::vector<std::string>(), "localhost"),
+                  "a set of local interfaces to bind to in proxy mode, separated by spaces")
+            ("mode.proxy.remote_host", po::value< std::vector<std::string> >(&m_config.m_mode_proxy_remote_hosts)->multitoken()->default_value(std::vector<std::string>(), "127.0.0.1"),
+                  "a set of remote hosts to send to in proxy mode, separated by spaces")
             ;
 
         // Hidden options allowed with the command line and the config file
@@ -322,7 +322,21 @@ public:
     { 
         return lhs->before(*rhs); 
     } 
-}; 
+};
+
+template < typename T >
+std::ostream& operator<<(std::ostream& stream, const std::vector<T>& vect)
+{
+    for (auto it = vect.begin(); it != vect.end(); ++it) {
+        if (std::distance(vect.begin(), it) == vect.size() - 1) {
+            stream << *it;
+        } else {
+            stream << *it << " ";
+        }
+    }
+
+    return stream;
+}
 
 template < typename T > 
 class auto_value_cast_helper
@@ -349,6 +363,8 @@ bool ConfigurationBuilder::build_show_options_message(
     conversion_map[ & typeid( bool ) ] = auto_value_cast_helper< bool >() ; 
     conversion_map[ & typeid( uint16_t ) ] = auto_value_cast_helper< uint16_t >() ; 
     conversion_map[ & typeid( uint64_t ) ] = auto_value_cast_helper< uint64_t >() ;
+    conversion_map[ & typeid( class std::vector<uint16_t> ) ] = auto_value_cast_helper< class std::vector<uint16_t> >() ;
+    conversion_map[ & typeid( class std::vector<std::string> ) ] = auto_value_cast_helper < class std::vector<std::string> >() ;
 
     composed_sstr << "Program options and their current settings composed of cmdline and cfgfile:" << std::endl << std::endl;
 

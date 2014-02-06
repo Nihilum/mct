@@ -31,6 +31,7 @@
 #define MCT_CONFIGURATION_CONFIGURATION_HPP
 
 #include <string>
+#include <vector>
 #include <cstdint>
 
 #include <Configuration/Config.hpp>
@@ -68,10 +69,12 @@ public:
     const std::string& get_log_rotate_filename() const { return m_log_rotate_filename; }
     uint64_t get_log_rotate_all_files_max_size() const { return m_log_rotate_all_files_max_size; }
     uint64_t get_log_rotate_min_free_space() const { return m_log_rotate_min_free_space; }
-    uint16_t get_mode_proxy_local_port() const { return m_mode_proxy_local_port; }
-    uint16_t get_mode_proxy_remote_port() const { return m_mode_proxy_remote_port; }
-    const std::string& get_mode_proxy_local_host() const { return m_mode_proxy_local_host; }
-    const std::string& get_mode_proxy_remote_host() const { return m_mode_proxy_remote_host; }
+
+    // ModeProxy module
+    const std::vector<uint16_t>& get_mode_proxy_local_ports() const { return m_mode_proxy_local_ports; }
+    const std::vector<uint16_t>& get_mode_proxy_remote_ports() const { return m_mode_proxy_remote_ports; }
+    const std::vector<std::string>& get_mode_proxy_local_hosts() const { return m_mode_proxy_local_hosts; }
+    const std::vector<std::string>& get_mode_proxy_remote_hosts() const { return m_mode_proxy_remote_hosts; }
 
     void set_config_filename(const std::string& filename) { m_config_filename = filename; }
     void set_app_mode(const std::string& mode) { m_mode = mode; }
@@ -103,9 +106,7 @@ protected:
     std::string m_log_severity_console;
     std::string m_log_severity_file;
     std::string m_log_rotate_filename;
-    std::string m_mode_proxy_local_host;
-    std::string m_mode_proxy_remote_host;
-
+    
     bool m_log_silent;
     bool m_log_nofile;
     bool m_log_rotate;
@@ -114,8 +115,11 @@ protected:
     uint64_t m_log_rotate_all_files_max_size;
     uint64_t m_log_rotate_min_free_space;
 
-    uint16_t m_mode_proxy_local_port;
-    uint16_t m_mode_proxy_remote_port;
+    // ModeProxy module
+    std::vector<std::string> m_mode_proxy_local_hosts;
+    std::vector<std::string> m_mode_proxy_remote_hosts;
+    std::vector<uint16_t> m_mode_proxy_local_ports;
+    std::vector<uint16_t> m_mode_proxy_remote_ports;
 };
 
 }

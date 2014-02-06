@@ -41,8 +41,7 @@ const std::string Configuration::default_config_filename = "/etc/mct.cfg";
 Configuration::Configuration(int argc, char** argv)
  : m_argc(argc), m_argv(argv), m_app_name(m_argv[0]),
  m_log_silent(false), m_log_nofile(false), m_log_rotate(false),
- m_log_rotate_size(0), m_log_rotate_all_files_max_size(0), m_log_rotate_min_free_space(0),
- m_mode_proxy_local_port(0), m_mode_proxy_remote_port(0)
+ m_log_rotate_size(0), m_log_rotate_all_files_max_size(0), m_log_rotate_min_free_space(0)
 {
 }
 

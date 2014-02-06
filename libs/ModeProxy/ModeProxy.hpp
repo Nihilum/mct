@@ -53,6 +53,10 @@ public:
     virtual const std::string& get_name() const;
 
     virtual bool run();
+
+protected:
+    uint16_t get_num_of_all_proxies() const;
+    bool validate_configuration() const;
 };
 
 }

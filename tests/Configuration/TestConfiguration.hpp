@@ -77,12 +77,16 @@ class TestConfiguration : public CPPUNIT_NS::TestCase
     CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_log_rotate_min_free_space);
     CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cmd_mode_proxy_local_port);
     CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_local_port);
+    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_local_port_multiple);
     CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cmd_mode_proxy_remote_port);
     CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_remote_port);
+    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_remote_port_multiple);
     CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cmd_mode_proxy_local_host);
     CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_local_host);
+    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_local_host_multiple);
     CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cmd_mode_proxy_remote_host);
     CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_remote_host);
+    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_remote_host_multiple);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -126,12 +130,16 @@ protected:
     void test_ConfigurationBuilder_build_configuration_load_cfg_log_rotate_min_free_space();
     void test_ConfigurationBuilder_build_configuration_load_cmd_mode_proxy_local_port();
     void test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_local_port();
+    void test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_local_port_multiple();
     void test_ConfigurationBuilder_build_configuration_load_cmd_mode_proxy_remote_port();
     void test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_remote_port();
+    void test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_remote_port_multiple();
     void test_ConfigurationBuilder_build_configuration_load_cmd_mode_proxy_local_host();
     void test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_local_host();
+    void test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_local_host_multiple();
     void test_ConfigurationBuilder_build_configuration_load_cmd_mode_proxy_remote_host();
     void test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_remote_host();
+    void test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_remote_host_multiple();
 };
 
 #endif // MCT_TESTS_CONFIGURATION_TEST_CONFIGURATION_HPP
