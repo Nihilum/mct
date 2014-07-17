@@ -30,63 +30,57 @@
 #ifndef MCT_TESTS_CONFIGURATION_TEST_CONFIGURATION_HPP
 #define MCT_TESTS_CONFIGURATION_TEST_CONFIGURATION_HPP
 
-#include <cppunit/TestRunner.h>
-#include <cppunit/TestResult.h>
-#include <cppunit/TestResultCollector.h>
-#include <cppunit/BriefTestProgressListener.h>
-
-#include <cppunit/extensions/HelperMacros.h>
-#include <cppunit/extensions/TestFactoryRegistry.h>
+#include <moctest/moctest.hpp>
 
 class TestConfiguration : public CPPUNIT_NS::TestCase
 {
     CPPUNIT_TEST_SUITE(TestConfiguration);
     CPPUNIT_TEST(test_Configuration_ctor);
-    CPPUNIT_TEST(test_ConfigurationBuilder_ctor);
-    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_false);
-    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_help);
-    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_version);
-    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_generate);
-    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_show_options);
+    CPPUNIT_TEST(test_ctor);
+    CPPUNIT_TEST(test_false);
+    CPPUNIT_TEST(test_help);
+    CPPUNIT_TEST(test_version);
+    CPPUNIT_TEST(test_generate);
+    CPPUNIT_TEST(test_show_options);
 
-    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cmd_mode);
-    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_mode);
-    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cmd_log_silent);
-    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_log_silent);
-    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cmd_log_nofile);
-    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_log_nofile);
-    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cmd_log_directory);
-    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_log_directory);
-    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cmd_log_filename);
-    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_log_filename);
-    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cmd_log_format);
-    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_log_format);
-    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cmd_log_severity_console);
-    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_log_severity_console);
-    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cmd_log_severity_file);
-    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_log_severity_file);
-    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cmd_log_rotate);
-    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_log_rotate);
-    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cmd_log_rotate_size);
-    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_log_rotate_size);
-    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cmd_log_rotate_filename);
-    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_log_rotate_filename);
-    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cmd_log_rotate_all_files_max_size);
-    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_log_rotate_all_files_max_size);
-    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cmd_log_rotate_min_free_space);
-    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_log_rotate_min_free_space);
-    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cmd_mode_proxy_local_port);
-    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_local_port);
-    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_local_port_multiple);
-    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cmd_mode_proxy_remote_port);
-    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_remote_port);
-    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_remote_port_multiple);
-    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cmd_mode_proxy_local_host);
-    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_local_host);
-    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_local_host_multiple);
-    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cmd_mode_proxy_remote_host);
-    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_remote_host);
-    CPPUNIT_TEST(test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_remote_host_multiple);
+    CPPUNIT_TEST(test_load_cmd_mode);
+    CPPUNIT_TEST(test_load_cfg_mode);
+    CPPUNIT_TEST(test_load_cmd_log_silent);
+    CPPUNIT_TEST(test_load_cfg_log_silent);
+    CPPUNIT_TEST(test_load_cmd_log_nofile);
+    CPPUNIT_TEST(test_load_cfg_log_nofile);
+    CPPUNIT_TEST(test_load_cmd_log_directory);
+    CPPUNIT_TEST(test_load_cfg_log_directory);
+    CPPUNIT_TEST(test_load_cmd_log_filename);
+    CPPUNIT_TEST(test_load_cfg_log_filename);
+    CPPUNIT_TEST(test_load_cmd_log_format);
+    CPPUNIT_TEST(test_load_cfg_log_format);
+    CPPUNIT_TEST(test_load_cmd_log_severity_console);
+    CPPUNIT_TEST(test_load_cfg_log_severity_console);
+    CPPUNIT_TEST(test_load_cmd_log_severity_file);
+    CPPUNIT_TEST(test_load_cfg_log_severity_file);
+    CPPUNIT_TEST(test_load_cmd_log_rotate);
+    CPPUNIT_TEST(test_load_cfg_log_rotate);
+    CPPUNIT_TEST(test_load_cmd_log_rotate_size);
+    CPPUNIT_TEST(test_load_cfg_log_rotate_size);
+    CPPUNIT_TEST(test_load_cmd_log_rotate_filename);
+    CPPUNIT_TEST(test_load_cfg_log_rotate_filename);
+    CPPUNIT_TEST(test_load_cmd_log_rotate_all_files_max_size);
+    CPPUNIT_TEST(test_load_cfg_log_rotate_all_files_max_size);
+    CPPUNIT_TEST(test_load_cmd_log_rotate_min_free_space);
+    CPPUNIT_TEST(test_load_cfg_log_rotate_min_free_space);
+    CPPUNIT_TEST(test_load_cmd_mode_proxy_local_port);
+    CPPUNIT_TEST(test_load_cfg_mode_proxy_local_port);
+    CPPUNIT_TEST(test_load_cfg_mode_proxy_local_port_multiple);
+    CPPUNIT_TEST(test_load_cmd_mode_proxy_remote_port);
+    CPPUNIT_TEST(test_load_cfg_mode_proxy_remote_port);
+    CPPUNIT_TEST(test_load_cfg_mode_proxy_remote_port_multiple);
+    CPPUNIT_TEST(test_load_cmd_mode_proxy_local_host);
+    CPPUNIT_TEST(test_load_cfg_mode_proxy_local_host);
+    CPPUNIT_TEST(test_load_cfg_mode_proxy_local_host_multiple);
+    CPPUNIT_TEST(test_load_cmd_mode_proxy_remote_host);
+    CPPUNIT_TEST(test_load_cfg_mode_proxy_remote_host);
+    CPPUNIT_TEST(test_load_cfg_mode_proxy_remote_host_multiple);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -95,51 +89,51 @@ public:
 
 protected:
     void test_Configuration_ctor();
-    void test_ConfigurationBuilder_ctor();
-    void test_ConfigurationBuilder_build_configuration_false();
-    void test_ConfigurationBuilder_build_configuration_help();
-    void test_ConfigurationBuilder_build_configuration_version();
-    void test_ConfigurationBuilder_build_configuration_generate();
-    void test_ConfigurationBuilder_build_configuration_show_options();
+    void test_ctor();
+    void test_false();
+    void test_help();
+    void test_version();
+    void test_generate();
+    void test_show_options();
 
-    void test_ConfigurationBuilder_build_configuration_load_cmd_mode();
-    void test_ConfigurationBuilder_build_configuration_load_cfg_mode();
-    void test_ConfigurationBuilder_build_configuration_load_cmd_log_silent();
-    void test_ConfigurationBuilder_build_configuration_load_cfg_log_silent();
-    void test_ConfigurationBuilder_build_configuration_load_cmd_log_nofile();
-    void test_ConfigurationBuilder_build_configuration_load_cfg_log_nofile();
-    void test_ConfigurationBuilder_build_configuration_load_cmd_log_directory();
-    void test_ConfigurationBuilder_build_configuration_load_cfg_log_directory();
-    void test_ConfigurationBuilder_build_configuration_load_cmd_log_filename();
-    void test_ConfigurationBuilder_build_configuration_load_cfg_log_filename();
-    void test_ConfigurationBuilder_build_configuration_load_cmd_log_format();
-    void test_ConfigurationBuilder_build_configuration_load_cfg_log_format();
-    void test_ConfigurationBuilder_build_configuration_load_cmd_log_severity_console();
-    void test_ConfigurationBuilder_build_configuration_load_cfg_log_severity_console();
-    void test_ConfigurationBuilder_build_configuration_load_cmd_log_severity_file();
-    void test_ConfigurationBuilder_build_configuration_load_cfg_log_severity_file();
-    void test_ConfigurationBuilder_build_configuration_load_cmd_log_rotate();
-    void test_ConfigurationBuilder_build_configuration_load_cfg_log_rotate();
-    void test_ConfigurationBuilder_build_configuration_load_cmd_log_rotate_size();
-    void test_ConfigurationBuilder_build_configuration_load_cfg_log_rotate_size();
-    void test_ConfigurationBuilder_build_configuration_load_cmd_log_rotate_filename();
-    void test_ConfigurationBuilder_build_configuration_load_cfg_log_rotate_filename();
-    void test_ConfigurationBuilder_build_configuration_load_cmd_log_rotate_all_files_max_size();
-    void test_ConfigurationBuilder_build_configuration_load_cfg_log_rotate_all_files_max_size();
-    void test_ConfigurationBuilder_build_configuration_load_cmd_log_rotate_min_free_space();
-    void test_ConfigurationBuilder_build_configuration_load_cfg_log_rotate_min_free_space();
-    void test_ConfigurationBuilder_build_configuration_load_cmd_mode_proxy_local_port();
-    void test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_local_port();
-    void test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_local_port_multiple();
-    void test_ConfigurationBuilder_build_configuration_load_cmd_mode_proxy_remote_port();
-    void test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_remote_port();
-    void test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_remote_port_multiple();
-    void test_ConfigurationBuilder_build_configuration_load_cmd_mode_proxy_local_host();
-    void test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_local_host();
-    void test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_local_host_multiple();
-    void test_ConfigurationBuilder_build_configuration_load_cmd_mode_proxy_remote_host();
-    void test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_remote_host();
-    void test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_remote_host_multiple();
+    void test_load_cmd_mode();
+    void test_load_cfg_mode();
+    void test_load_cmd_log_silent();
+    void test_load_cfg_log_silent();
+    void test_load_cmd_log_nofile();
+    void test_load_cfg_log_nofile();
+    void test_load_cmd_log_directory();
+    void test_load_cfg_log_directory();
+    void test_load_cmd_log_filename();
+    void test_load_cfg_log_filename();
+    void test_load_cmd_log_format();
+    void test_load_cfg_log_format();
+    void test_load_cmd_log_severity_console();
+    void test_load_cfg_log_severity_console();
+    void test_load_cmd_log_severity_file();
+    void test_load_cfg_log_severity_file();
+    void test_load_cmd_log_rotate();
+    void test_load_cfg_log_rotate();
+    void test_load_cmd_log_rotate_size();
+    void test_load_cfg_log_rotate_size();
+    void test_load_cmd_log_rotate_filename();
+    void test_load_cfg_log_rotate_filename();
+    void test_load_cmd_log_rotate_all_files_max_size();
+    void test_load_cfg_log_rotate_all_files_max_size();
+    void test_load_cmd_log_rotate_min_free_space();
+    void test_load_cfg_log_rotate_min_free_space();
+    void test_load_cmd_mode_proxy_local_port();
+    void test_load_cfg_mode_proxy_local_port();
+    void test_load_cfg_mode_proxy_local_port_multiple();
+    void test_load_cmd_mode_proxy_remote_port();
+    void test_load_cfg_mode_proxy_remote_port();
+    void test_load_cfg_mode_proxy_remote_port_multiple();
+    void test_load_cmd_mode_proxy_local_host();
+    void test_load_cfg_mode_proxy_local_host();
+    void test_load_cfg_mode_proxy_local_host_multiple();
+    void test_load_cmd_mode_proxy_remote_host();
+    void test_load_cfg_mode_proxy_remote_host();
+    void test_load_cfg_mode_proxy_remote_host_multiple();
 };
 
 #endif // MCT_TESTS_CONFIGURATION_TEST_CONFIGURATION_HPP

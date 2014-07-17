@@ -30,9 +30,6 @@
 #include <vector>
 #include <sstream>
 
-#include <cppunit/CompilerOutputter.h>
-#include <cppunit/ui/text/TestRunner.h>
-
 #include <boost/filesystem.hpp>
 
 #include <Application/Application.hpp>
@@ -155,26 +152,4 @@ void TestApplication::test_cannot_find_app_mode()
 
     CPPUNIT_ASSERT_EQUAL(expected_return_value, return_value);
     CPPUNIT_ASSERT_EQUAL(true, sStr.str().find(expected_message) != std::string::npos);
-}
-
-CPPUNIT_TEST_SUITE_REGISTRATION(TestApplication);
-
-int main(int argc, char* argv[])
-{
-    CPPUNIT_NS::TestResult controller;
-
-    CPPUNIT_NS::TestResultCollector result;
-    controller.addListener(&result);
-
-    CPPUNIT_NS::BriefTestProgressListener progress;
-    controller.addListener(&progress);
-
-    CPPUNIT_NS::TextUi::TestRunner runner;
-    runner.addTest(CPPUNIT_NS::TestFactoryRegistry::getRegistry().makeTest());
-    runner.run(controller);
-
-    CPPUNIT_NS::CompilerOutputter outputter(&result, std::cerr);
-    outputter.write();
-
-    return result.wasSuccessful() ? 0 : 1;
 }

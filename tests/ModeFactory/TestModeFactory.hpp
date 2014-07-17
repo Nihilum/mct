@@ -30,13 +30,7 @@
 #ifndef MCT_TESTS_MODEFACTORY_TEST_MODEFACTORY_HPP
 #define MCT_TESTS_MODEFACTORY_TEST_MODEFACTORY_HPP
 
-#include <cppunit/TestRunner.h>
-#include <cppunit/TestResult.h>
-#include <cppunit/TestResultCollector.h>
-#include <cppunit/BriefTestProgressListener.h>
-
-#include <cppunit/extensions/HelperMacros.h>
-#include <cppunit/extensions/TestFactoryRegistry.h>
+#include <moctest/moctest.hpp>
 
 class TestModeFactory : public CPPUNIT_NS::TestCase
 {

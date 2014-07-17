@@ -30,13 +30,7 @@
 #ifndef MCT_TESTS_MODE_TEST_MODE_HPP
 #define MCT_TESTS_MODE_TEST_MODE_HPP
 
-#include <cppunit/TestRunner.h>
-#include <cppunit/TestResult.h>
-#include <cppunit/TestResultCollector.h>
-#include <cppunit/BriefTestProgressListener.h>
-
-#include <cppunit/extensions/HelperMacros.h>
-#include <cppunit/extensions/TestFactoryRegistry.h>
+#include <moctest/moctest.hpp>
 
 class TestMode : public CPPUNIT_NS::TestCase
 {

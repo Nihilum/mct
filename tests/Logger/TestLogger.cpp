@@ -31,9 +31,6 @@
 
 #include <config.hpp>
 
-#include <cppunit/CompilerOutputter.h>
-#include <cppunit/ui/text/TestRunner.h>
-
 #include <boost/regex.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
@@ -50,7 +47,7 @@ class ConfigFileReaderHelper
 {
 public:
     ConfigFileReaderHelper(const std::string& filename, const std::vector<std::string>& keys_values, const int argc, const char** argv)
-    : m_config(argc, (char**)argv), m_log(m_config), m_filename(filename), m_keys_values(keys_values), m_argc(argc), m_argv(argv)
+    : m_config(argc, (char**)argv), m_filename(filename), m_keys_values(keys_values), m_argc(argc), m_argv(argv)
     {
     }
 
@@ -77,12 +74,10 @@ public:
         return config_builder.build_configuration(message_to_user);
     }
 
-    const mct::Configuration& get_config() const { return m_config; }
-    mct::Logger& get_log() { return m_log; }
+    mct::Configuration& get_config() { return m_config; }
 
 private:
     mct::Configuration m_config;
-    mct::Logger m_log;
     std::string m_filename;
     std::vector<std::string> m_keys_values;
     const int m_argc;
@@ -104,59 +99,63 @@ void TestLogger::tearDown()
 }
 
 void test_generic_log_output(const std::string& filename, std::vector<std::string>&& keys_values, void (mct::Logger::*mthd_ptr)(const char*, ...), const char letter, bool expect_empty = false,
-    const short int times_to_call_log = 1)
+	const short int times_to_call_log = 1)
 {
-    bool expected_value = true;
-    std::string expected_message("Mattsource's Connection Tunneler v. 0.1.0-dev");
-    std::string message_to_user;
-    const bool expected_return_value = true;
+	bool expected_value = true;
+	std::string expected_message("Mattsource's Connection Tunneler v. 0.1.0-dev");
+	std::string message_to_user;
+	const bool expected_return_value = true;
 
-    const int argc = 3;
-    const char* argv[argc] = { "mct", "-c", filename.c_str()};
+	const int argc = 3;
+	const char* argv[argc] = { "mct", "-c", filename.c_str() };
 
-    ConfigFileReaderHelper helper(filename, keys_values, argc, argv);
+	ConfigFileReaderHelper helper(filename, keys_values, argc, argv);
+	
+	std::string someText;
+	std::ostringstream sStr;
+	{
+		mct::Logger logger(helper.get_config());
 
-    CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file(message_to_user));
-    CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
+		CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file(message_to_user));
+		CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
 
-    message_to_user.clear();
-    expected_message.clear();
+		message_to_user.clear();
+		expected_message.clear();
 
-    mct::Logger& logger = helper.get_log();
-    CPPUNIT_ASSERT_EQUAL(expected_return_value, logger.initialize(message_to_user));
-    CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
+		CPPUNIT_ASSERT_EQUAL(expected_return_value, logger.initialize(message_to_user));
+		CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
 
-    std::string someText;
-    for (int i = 0; i < 256; ++i) {
-        someText += boost::lexical_cast<std::string>(i);
-    }
+		for (int i = 0; i < 256; ++i) {
+			someText += boost::lexical_cast<std::string>(i);
+		}
 
-    std::streambuf* prevstr = std::clog.rdbuf();
-    std::ostringstream sStr;
-    std::clog.rdbuf(sStr.rdbuf());
-    for (short int i = 0; i < times_to_call_log; ++i) {
-        (logger.*mthd_ptr)(someText.c_str());
-    }
-    std::clog.rdbuf(prevstr);
+		std::streambuf* prevstr = std::clog.rdbuf();
+		std::clog.rdbuf(sStr.rdbuf());
+		for (short int i = 0; i < times_to_call_log; ++i) {
+			(logger.*mthd_ptr)(someText.c_str());
+		}
+		std::clog.rdbuf(prevstr);
+	}
 
-    std::string sExpr("\\[.*\\]\\["); sExpr += letter; sExpr += "] ";
-    sExpr += someText + std::string("\n");
-    std::stringstream msgStr;
-    msgStr << "Expected to match boost::regex: " << sExpr << std::endl;
-    msgStr << "- Actual: " << sStr.str() << std::endl;
+	std::string sExpr("\\[.*\\]\\["); sExpr += letter; sExpr += "] ";
+	sExpr += someText + std::string("\n");
+
+	std::stringstream msgStr;
+	msgStr << "Expected to match boost::regex: " << sExpr << std::endl;
+	msgStr << "- Actual: " << sStr.str() << std::endl;
 
     const boost::regex expression(sExpr.c_str());
 
     if (expect_empty) {
         CPPUNIT_ASSERT_EQUAL(std::string(""), sStr.str());
     } else {
-        CPPUNIT_ASSERT_EQUAL_MESSAGE(msgStr.str().c_str(), true, boost::regex_match(sStr.str(), expression));
+		CPPUNIT_ASSERT_EQUAL_MESSAGE(msgStr.str(), true, boost::regex_match(sStr.str(), expression));
     }
 }
 
 void TestLogger::test_Logger_debug()
 {
-    test_generic_log_output("./tpl_debug.cfg", {"log.nofile = 1", "log.severity.console = debug"}, &mct::Logger::debug, 'D');
+	test_generic_log_output("./tpl_debug.cfg", { "log.nofile = 1", "log.severity.console = debug" }, &mct::Logger::debug, 'D');
 }
 
 void TestLogger::test_Logger_info()
@@ -217,26 +216,4 @@ void TestLogger::test_Logger_init_log_rotate()
 
     CPPUNIT_ASSERT_EQUAL(true, boost::filesystem::exists(first_file));
     CPPUNIT_ASSERT_EQUAL(true, boost::filesystem::exists(second_file));
-}
-
-CPPUNIT_TEST_SUITE_REGISTRATION(TestLogger);
-
-int main(int argc, char* argv[])
-{
-    CPPUNIT_NS::TestResult controller;
-
-    CPPUNIT_NS::TestResultCollector result;
-    controller.addListener(&result);
-
-    CPPUNIT_NS::BriefTestProgressListener progress;
-    controller.addListener(&progress);
-
-    CPPUNIT_NS::TextUi::TestRunner runner;
-    runner.addTest(CPPUNIT_NS::TestFactoryRegistry::getRegistry().makeTest());
-    runner.run(controller);
-
-    CPPUNIT_NS::CompilerOutputter outputter(&result, std::cerr);
-    outputter.write();
-
-    return result.wasSuccessful() ? 0 : 1;
 }

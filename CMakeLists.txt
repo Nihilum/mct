@@ -50,7 +50,7 @@ message(
   "  CPPUNIT_INCLUDES (optional): Path where CPPUNIT Library includes can be found\n"
   "  CPPUNIT_LIBRARY (optional): Path where CPPUNIT Library static can be found\n"
   "  BOOST_PATH: (optional) Path to boost installation\n"
-  "  BOOST_VERSION: (optional) Used boost version (for example 1.54.0)\n\n"
+  "  BOOST_VERSION: (optional) Used boost version (for example 1.55.0)\n\n"
   "To set an option simply type -D<OPTION>=<VALUE> after 'cmake <srcs>'.\n"
   "For example: cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local/mct -DBOOST_PATH=C:\\Boost -DCMAKE_BUILD_TYPE=Release\n\n"
 )
@@ -84,7 +84,16 @@ set(INTERNAL_LIBS)
 add_subdirectory(libs)
 
 if (CPPUNIT_INCLUDES AND CPPUNIT_LIBRARY)
+  if (NOT DEFINED MOCTEST_INCLUDES)
+    message(FATAL_ERROR "When building with CPPUnit, this project requires MOCTEST_LIB (includes). Visit http://github.com/Nihilum/moctest and get it.")
+  endif()
+
+  if (NOT DEFINED MOCTEST_LIB)
+    message(FATAL_ERROR "When building with CPPUnit, this project requires MOCTEST_LIB. Visit http://github.com/Nihilum/moctest and get it.")
+  endif()
+
   add_subdirectory(tests)
+  add_subdirectory(utils)
 endif()
 
 set(MCT_SRCS ${CMAKE_SOURCE_DIR}/src/main.cpp)
@@ -146,6 +155,11 @@ endif()
 if (DEFINED WIN32)
   add_definitions( -D_WIN32_WINNT=0x0501 )
 
+  if (CPPUNIT_INCLUDES AND CPPUNIT_LIBRARY)
+    file(TO_CMAKE_PATH "${MOCTEST_LIB}/moctest.dll" MOCTEST_INSTALL_PATH)
+    install(FILES ${MOCTEST_INSTALL_PATH} DESTINATION ${CMAKE_INSTALL_PREFIX}/tests)
+  endif()
+
   set(MCT_BOOST_LIBS_INUSE ${MCT_BOOST_LIBS_INUSE} "boost_chrono-.*")
   set(MCT_BOOST_LIBS_INUSE ${MCT_BOOST_LIBS_INUSE} "boost_date_time-.*")
   set(MCT_BOOST_LIBS_INUSE ${MCT_BOOST_LIBS_INUSE} "boost_filesystem-.*")
@@ -179,6 +193,11 @@ if (DEFINED WIN32)
 
 # Install moccpp Library on linux and prepare ./etc directory
 else()
+  if (CPPUNIT_INCLUDES AND CPPUNIT_LIBRARY)
+    file(TO_CMAKE_PATH "${MOCTEST_LIB}/libmoctest.so" MOCTEST_INSTALL_PATH)
+    install(FILES ${MOCTEST_INSTALL_PATH} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+  endif()
+
   file(TO_CMAKE_PATH "${MOCCPPLIB_LIBRARIES}/libmoccpp.so" MOCCPPLIB_LIBRARY_INSTALL_PATH)
   install(FILES ${MOCCPPLIB_LIBRARY_INSTALL_PATH} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
   install(DIRECTORY "${CMAKE_BINARY_DIR}/etc" DESTINATION "${CMAKE_INSTALL_PREFIX}")

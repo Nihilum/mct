@@ -30,9 +30,6 @@
 #include <memory>
 #include <vector>
 
-#include <cppunit/CompilerOutputter.h>
-#include <cppunit/ui/text/TestRunner.h>
-
 #include <boost/filesystem.hpp>
 
 #include <Mode/Mode.hpp>
@@ -55,7 +52,7 @@ class ConfigFileReaderHelper
 {
 public:
     ConfigFileReaderHelper(const std::string& filename, const std::vector<std::string>& keys_values, const int argc, const char** argv)
-    : m_config(argc, (char**)argv), m_log(m_config), m_filename(filename), m_keys_values(keys_values), m_argc(argc), m_argv(argv)
+    : m_config(argc, (char**)argv), m_filename(filename), m_keys_values(keys_values), m_argc(argc), m_argv(argv)
     {
     }
 
@@ -83,11 +80,9 @@ public:
     }
 
     mct::Configuration& get_config() { return m_config; }
-    mct::Logger& get_log() { return m_log; }
 
 private:
     mct::Configuration m_config;
-    mct::Logger m_log;
     std::string m_filename;
     std::vector<std::string> m_keys_values;
     const int m_argc;
@@ -121,57 +116,39 @@ void TestModeProxy::test_modeproxy_error_local_port_already_bound()
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
 
     message_to_user.clear();
-    expected_message.clear();
+	expected_message.clear();
 
-    CPPUNIT_ASSERT_EQUAL(expected_return_value, helper.get_log().initialize(message_to_user));
-    CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
+	{
+		mct::Logger logger(helper.get_config());
+		CPPUNIT_ASSERT_EQUAL(expected_return_value, logger.initialize(message_to_user));
+		CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
 
-    mct::ModeFactory mode_factory(helper.get_config(), helper.get_log());
-    std::unique_ptr<mct::Mode> app_mode(mode_factory.create(helper.get_config().get_app_mode()));
+		mct::ModeFactory mode_factory(helper.get_config(), logger);
+		std::unique_ptr<mct::Mode> app_mode(mode_factory.create(helper.get_config().get_app_mode()));
 
-    CPPUNIT_ASSERT_EQUAL(false, !app_mode);
-    CPPUNIT_ASSERT_EQUAL(std::string("proxy"), app_mode->get_name());
+		CPPUNIT_ASSERT_EQUAL(false, !app_mode);
+		CPPUNIT_ASSERT_EQUAL(std::string("proxy"), app_mode->get_name());
 
-    expected_message = "Local port already bound!";
+		expected_message = "Local port already bound!";
 
-    /*std::streambuf* prevstr = std::clog.rdbuf();
-    std::ostringstream sStr;
-    std::clog.rdbuf(sStr.rdbuf());*/
+		/*std::streambuf* prevstr = std::clog.rdbuf();
+		std::ostringstream sStr;
+		std::clog.rdbuf(sStr.rdbuf());*/
 
-    bool app_result = false;
+		bool app_result = false;
 
-    try {
-        app_result = app_mode->run();
-    } catch (const std::exception& e) {
-        //std::clog.rdbuf(prevstr);
-        std::cerr << "Error: " << e.what() /*<< ". Log: " << sStr.str() */<< std::endl;
-        return;
-    }
+		try {
+			app_result = app_mode->run();
+		}
+		catch (const std::exception& e) {
+			//std::clog.rdbuf(prevstr);
+			std::cerr << "Error: " << e.what() /*<< ". Log: " << sStr.str() */ << std::endl;
+			return;
+		}
 
-    //std::clog.rdbuf(prevstr);
+		//std::clog.rdbuf(prevstr);
 
-    CPPUNIT_ASSERT_EQUAL(false, app_result);
-    //CPPUNIT_ASSERT_EQUAL(true, sStr.str().find(expected_message) != std::string::npos);
-}
-
-CPPUNIT_TEST_SUITE_REGISTRATION(TestModeProxy);
-
-int main(int argc, char* argv[])
-{
-    CPPUNIT_NS::TestResult controller;
-
-    CPPUNIT_NS::TestResultCollector result;
-    controller.addListener(&result);
-
-    CPPUNIT_NS::BriefTestProgressListener progress;
-    controller.addListener(&progress);
-
-    CPPUNIT_NS::TextUi::TestRunner runner;
-    runner.addTest(CPPUNIT_NS::TestFactoryRegistry::getRegistry().makeTest());
-    runner.run(controller);
-
-    CPPUNIT_NS::CompilerOutputter outputter(&result, std::cerr);
-    outputter.write();
-
-    return result.wasSuccessful() ? 0 : 1;
+		CPPUNIT_ASSERT_EQUAL(false, app_result);
+		//CPPUNIT_ASSERT_EQUAL(true, sStr.str().find(expected_message) != std::string::npos);
+	}
 }

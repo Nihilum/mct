@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2013-2014 Mateusz Kolodziejski
+ * Copyright (c) 2014 Mateusz Kolodziejski
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -22,34 +22,29 @@
  */
 
 /**
- * @file tests/Application/TestApplication.hpp
+ * @file tests/Tests.cpp
  *
- * @desc Application entry point tests.
+ * @desc Entry point for all mct tests.
  */
-
-#ifndef MCT_TESTS_APPLICATION_TEST_APPLICATION_HPP
-#define MCT_TESTS_APPLICATION_TEST_APPLICATION_HPP
 
 #include <moctest/moctest.hpp>
 
-class TestApplication : public CPPUNIT_NS::TestCase
+#include "Application/TestApplication.hpp"
+#include "Configuration/TestConfiguration.hpp"
+#include "Logger/TestLogger.hpp"
+#include "Mode/TestMode.hpp"
+#include "ModeFactory/TestModeFactory.hpp"
+#include "ModeProxy/TestModeProxy.hpp"
+
+
+int main(int argc, char* argv[])
 {
-    CPPUNIT_TEST_SUITE(TestApplication);
-    CPPUNIT_TEST(test_init_configuration_failed);
-    CPPUNIT_TEST(test_special_mode);
-    CPPUNIT_TEST(test_init_logger_failed);
-    CPPUNIT_TEST(test_cannot_find_app_mode);
-    CPPUNIT_TEST_SUITE_END();
-
-public:
-    void setUp();
-    void tearDown();
-
-protected:
-    void test_init_configuration_failed();
-    void test_special_mode();
-    void test_init_logger_failed();
-    void test_cannot_find_app_mode();
-};
-
-#endif // MCT_TESTS_APPLICATION_TEST_APPLICATION_HPP
+    moctest::Framework tests(argc, argv);
+    tests.register_suite<TestApplication>();
+    tests.register_suite<TestConfiguration>();
+    tests.register_suite<TestLogger>();
+    tests.register_suite<TestMode>();
+    tests.register_suite<TestModeFactory>();
+    tests.register_suite<TestModeProxy>();
+    return tests.run();
+}

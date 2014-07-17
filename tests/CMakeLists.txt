@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 #
-# Copyright (c) 2013-2014 Mateusz Kolodziejski
+# Copyright (c) 2014 Mateusz Kolodziejski
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
 # this software and associated documentation files (the "Software"), to deal in
@@ -19,9 +19,54 @@
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-add_subdirectory(Application)
-add_subdirectory(Configuration)
-add_subdirectory(Logger)
-add_subdirectory(Mode)
-add_subdirectory(ModeFactory)
-add_subdirectory(ModeProxy)
+set(TEST_NAME mct_tests)
+
+file(GLOB_RECURSE TEST_SRCS ${CMAKE_SOURCE_DIR}/tests/ ${CMAKE_SOURCE_DIR}/tests/*.cpp ${CMAKE_SOURCE_DIR}/tests/*.hpp)
+
+link_directories(${Boost_LIBRARY_DIRS} ${MOCCPPLIB_LIBRARIES} ${MOCTEST_LIB})
+
+include_directories(
+  ${CMAKE_BINARY_DIR}
+  ${Boost_INCLUDE_DIRS}
+  ${MOCCPPLIB_INCLUDES}
+  ${MOCTEST_INCLUDES}
+  ${CPPUNIT_INCLUDES}
+  ${CMAKE_SOURCE_DIR}/libs
+)
+
+add_definitions( ${Boost_LIB_DIAGNOSTIC_DEFINITIONS} )
+add_definitions( -DBOOST_ALL_DYN_LINK )
+add_definitions( -DBOOST_LOG_DYN_LINK )
+add_definitions( -DBOOST_FILESYSTEM_NO_DEPRECATED )
+
+if(WIN32)
+  # Disable dll-external warnings for Visual Studio; [/GS-] disable buffer overflow security checks (optimization)
+  set(PROGRAM_COMPILE_FLAGS ${PROGRAM_COMPILE_FLAGS} "/wd4251 /wd4275 /wd4351 /GS-")
+else()
+  # Activate C++11 mode for GNU/GCC; set rpath to $ORIGIN so the shared library can be easily found
+  set(PROGRAM_COMPILE_FLAGS ${PROGRAM_COMPILE_FLAGS} "-std=c++11")
+endif()
+
+SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
+SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE) 
+SET(CMAKE_INSTALL_RPATH "\$ORIGIN")
+SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
+if(NOT DEFINED WIN32)
+  SET(CMAKE_EXE_LINKER_FLAGS "-Wl,--enable-new-dtags")
+endif()
+
+
+add_executable(${TEST_NAME} ${TEST_SRCS})
+
+if(WIN32)
+	target_link_libraries(${TEST_NAME} moccpp ${INTERNAL_LIBS} ${CPPUNIT_LIBRARY} moctest)
+else()
+	target_link_libraries(${TEST_NAME} moccpp ${INTERNAL_LIBS} ${CPPUNIT_LIBRARY} moctest boost_log)
+endif()
+
+set_target_properties(${TEST_NAME} PROPERTIES COMPILE_FLAGS
+  "${PROGRAM_COMPILE_FLAGS}"
+)
+
+install(TARGETS ${TEST_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/tests)

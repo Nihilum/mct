@@ -29,9 +29,6 @@
 
 #include <config.hpp>
 
-#include <cppunit/CompilerOutputter.h>
-#include <cppunit/ui/text/TestRunner.h>
-
 #include <boost/filesystem.hpp>
 
 #include <Configuration/Configuration.hpp>
@@ -123,7 +120,7 @@ void TestConfiguration::test_Configuration_ctor()
     CPPUNIT_ASSERT_EQUAL(std::string(argv[0]), config.get_app_name());
 }
 
-void TestConfiguration::test_ConfigurationBuilder_ctor()
+void TestConfiguration::test_ctor()
 {
     const int argc = 1;
     const char* argv[argc] = { "mct" };
@@ -133,7 +130,7 @@ void TestConfiguration::test_ConfigurationBuilder_ctor()
     CPPUNIT_ASSERT_EQUAL(true, &config_builder.get_configuration() == &config);
 }
 
-void TestConfiguration::test_ConfigurationBuilder_build_configuration_false()
+void TestConfiguration::test_false()
 {
     const int argc = 1;
     const char* argv[argc] = { "mct" };
@@ -146,7 +143,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_false()
     CPPUNIT_ASSERT_EQUAL(std::string("Could not open 'mct.cfg' file"), error_msg);
 }
 
-void TestConfiguration::test_ConfigurationBuilder_build_configuration_help()
+void TestConfiguration::test_help()
 {
     const int argc = 2;
     const char* argv[argc] = { "mct", "-h" };
@@ -169,7 +166,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_help()
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
 }
 
-void TestConfiguration::test_ConfigurationBuilder_build_configuration_version()
+void TestConfiguration::test_version()
 {
     const int argc = 2;
     const char* argv[argc] = { "mct", "-v" };
@@ -183,7 +180,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_version()
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
 }
 
-void TestConfiguration::test_ConfigurationBuilder_build_configuration_generate()
+void TestConfiguration::test_generate()
 {
     const int argc = 2;
     const char* argv[argc] = { "mct", "-g" };
@@ -326,7 +323,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_generate()
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
 }
 
-void TestConfiguration::test_ConfigurationBuilder_build_configuration_show_options()
+void TestConfiguration::test_show_options()
 {
     const int argc = 3;
     const char* argv[argc] = { "mct", "-v", "--show_options" };
@@ -366,7 +363,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_show_optio
         CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
 }
 
-void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_mode()
+void TestConfiguration::test_load_cmd_mode()
 {
     std::string param("mode");
     std::string cmd_param("--"); cmd_param += param;
@@ -386,7 +383,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_m
     CPPUNIT_ASSERT_EQUAL(expected_mode, helper.get_config().get_app_mode());
 }
 
-void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_mode()
+void TestConfiguration::test_load_cfg_mode()
 {
     std::string param("mode");
     std::string filename("./tbc_mode.cfg");
@@ -405,7 +402,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_m
     CPPUNIT_ASSERT_EQUAL(expected_mode, helper.get_config().get_app_mode());
 }
 
-void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_log_silent()
+void TestConfiguration::test_load_cmd_log_silent()
 {
     std::string param("log.silent");
     std::string cmd_param("--"); cmd_param += param;
@@ -425,7 +422,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_l
     CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_silent());
 }
 
-void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_log_silent()
+void TestConfiguration::test_load_cfg_log_silent()
 {
     std::string param("log.silent");
     std::string filename("./tbc_log_silent.cfg");
@@ -444,7 +441,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_l
     CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_silent());
 }
 
-void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_log_nofile()
+void TestConfiguration::test_load_cmd_log_nofile()
 {
     std::string param("log.nofile");
     std::string cmd_param("--"); cmd_param += param;
@@ -464,7 +461,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_l
     CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_nofile());
 }
 
-void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_log_nofile()
+void TestConfiguration::test_load_cfg_log_nofile()
 {
     std::string param("log.nofile");
     std::string filename("./tbc_log_nofile.cfg");
@@ -483,7 +480,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_l
     CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_nofile());
 }
 
-void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_log_directory()
+void TestConfiguration::test_load_cmd_log_directory()
 {
     std::string param("log.directory");
     std::string cmd_param("--"); cmd_param += param;
@@ -503,7 +500,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_l
     CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_directory());
 }
 
-void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_log_directory()
+void TestConfiguration::test_load_cfg_log_directory()
 {
     std::string param("log.directory");
     std::string filename("./tbc_log_directory.cfg");
@@ -522,7 +519,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_l
     CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_directory());
 }
 
-void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_log_filename()
+void TestConfiguration::test_load_cmd_log_filename()
 {
     std::string param("log.filename");
     std::string cmd_param("--"); cmd_param += param;
@@ -542,7 +539,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_l
     CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_filename());
 }
 
-void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_log_filename()
+void TestConfiguration::test_load_cfg_log_filename()
 {
     std::string param("log.filename");
     std::string filename("./tbc_log_filename.cfg");
@@ -561,7 +558,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_l
     CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_filename());
 }
 
-void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_log_format()
+void TestConfiguration::test_load_cmd_log_format()
 {
     std::string param("log.format");
     std::string cmd_param("--"); cmd_param += param;
@@ -581,7 +578,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_l
     CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_format());
 }
 
-void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_log_format()
+void TestConfiguration::test_load_cfg_log_format()
 {
     std::string param("log.format");
     std::string filename("./tbc_log_format.cfg");
@@ -600,7 +597,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_l
     CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_format());
 }
 
-void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_log_severity_console()
+void TestConfiguration::test_load_cmd_log_severity_console()
 {
     std::string param("log.severity.console");
     std::string cmd_param("--"); cmd_param += param;
@@ -620,7 +617,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_l
     CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_severity_console());
 }
 
-void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_log_severity_console()
+void TestConfiguration::test_load_cfg_log_severity_console()
 {
     std::string param("log.severity.console");
     std::string filename("./tbc_log_severity_console.cfg");
@@ -639,7 +636,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_l
     CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_severity_console());
 }
 
-void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_log_severity_file()
+void TestConfiguration::test_load_cmd_log_severity_file()
 {
     std::string param("log.severity.file");
     std::string cmd_param("--"); cmd_param += param;
@@ -659,7 +656,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_l
     CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_severity_file());
 }
 
-void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_log_severity_file()
+void TestConfiguration::test_load_cfg_log_severity_file()
 {
     std::string param("log.severity.file");
     std::string filename("./tbc_log_severity_file.cfg");
@@ -678,7 +675,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_l
     CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_severity_file());
 }
 
-void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_log_rotate()
+void TestConfiguration::test_load_cmd_log_rotate()
 {
     std::string param("log.rotate");
     std::string cmd_param("--"); cmd_param += param;
@@ -698,7 +695,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_l
     CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_rotate());
 }
 
-void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_log_rotate()
+void TestConfiguration::test_load_cfg_log_rotate()
 {
     std::string param("log.rotate");
     std::string filename("./tbc_log_rotate.cfg");
@@ -717,7 +714,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_l
     CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_rotate());
 }
 
-void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_log_rotate_size()
+void TestConfiguration::test_load_cmd_log_rotate_size()
 {
     std::string param("log.rotate.size");
     std::string cmd_param("--"); cmd_param += param;
@@ -737,7 +734,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_l
     CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_rotate_size());
 }
 
-void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_log_rotate_size()
+void TestConfiguration::test_load_cfg_log_rotate_size()
 {
     std::string param("log.rotate.size");
     std::string filename("./tbc_log_rotate_size.cfg");
@@ -756,7 +753,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_l
     CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_rotate_size());
 }
 
-void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_log_rotate_filename()
+void TestConfiguration::test_load_cmd_log_rotate_filename()
 {
     std::string param("log.rotate.filename");
     std::string cmd_param("--"); cmd_param += param;
@@ -776,7 +773,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_l
     CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_rotate_filename());
 }
 
-void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_log_rotate_filename()
+void TestConfiguration::test_load_cfg_log_rotate_filename()
 {
     std::string param("log.rotate.filename");
     std::string filename("./tbc_log_rotate_filename.cfg");
@@ -795,7 +792,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_l
     CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_rotate_filename());
 }
 
-void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_log_rotate_all_files_max_size()
+void TestConfiguration::test_load_cmd_log_rotate_all_files_max_size()
 {
     std::string param("log.rotate.all_files_max_size");
     std::string cmd_param("--"); cmd_param += param;
@@ -815,7 +812,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_l
     CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_rotate_all_files_max_size());
 }
 
-void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_log_rotate_all_files_max_size()
+void TestConfiguration::test_load_cfg_log_rotate_all_files_max_size()
 {
     std::string param("log.rotate.all_files_max_size");
     std::string filename("./tbc_log_rotate_all_files_max_size.cfg");
@@ -834,7 +831,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_l
     CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_rotate_all_files_max_size());
 }
 
-void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_log_rotate_min_free_space()
+void TestConfiguration::test_load_cmd_log_rotate_min_free_space()
 {
     std::string param("log.rotate.min_free_space");
     std::string cmd_param("--"); cmd_param += param;
@@ -854,7 +851,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_l
     CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_rotate_min_free_space());
 }
 
-void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_log_rotate_min_free_space()
+void TestConfiguration::test_load_cfg_log_rotate_min_free_space()
 {
     std::string param("log.rotate.min_free_space");
     std::string filename("./tbc_log_rotate_min_free_space.cfg");
@@ -873,7 +870,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_l
     CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_log_rotate_min_free_space());
 }
 
-void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_mode_proxy_local_port()
+void TestConfiguration::test_load_cmd_mode_proxy_local_port()
 {
     std::string param("mode.proxy.local_port");
     std::string cmd_param("--"); cmd_param += param;
@@ -893,7 +890,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_m
     CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_mode_proxy_local_ports()[0]);
 }
 
-void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_local_port()
+void TestConfiguration::test_load_cfg_mode_proxy_local_port()
 {
     std::string param("mode.proxy.local_port");
     std::string filename("./tbc_mode_proxy_local_port.cfg");
@@ -912,7 +909,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_m
     CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_mode_proxy_local_ports()[0]);
 }
 
-void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_local_port_multiple()
+void TestConfiguration::test_load_cfg_mode_proxy_local_port_multiple()
 {
     std::string param("mode.proxy.local_port");
     std::string filename("./tbc_mode_proxy_local_port.cfg");
@@ -933,7 +930,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_m
     CPPUNIT_ASSERT_EQUAL(expected_value_2, helper.get_config().get_mode_proxy_local_ports()[1]);
 }
 
-void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_mode_proxy_remote_port()
+void TestConfiguration::test_load_cmd_mode_proxy_remote_port()
 {
     std::string param("mode.proxy.remote_port");
     std::string cmd_param("--"); cmd_param += param;
@@ -953,7 +950,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_m
     CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_mode_proxy_remote_ports()[0]);
 }
 
-void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_remote_port()
+void TestConfiguration::test_load_cfg_mode_proxy_remote_port()
 {
     std::string param("mode.proxy.remote_port");
     std::string filename("./tbc_mode_proxy_remote_port.cfg");
@@ -972,7 +969,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_m
     CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_mode_proxy_remote_ports()[0]);
 }
 
-void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_remote_port_multiple()
+void TestConfiguration::test_load_cfg_mode_proxy_remote_port_multiple()
 {
     std::string param("mode.proxy.remote_port");
     std::string filename("./tbc_mode_proxy_remote_port.cfg");
@@ -993,7 +990,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_m
     CPPUNIT_ASSERT_EQUAL(expected_value_2, helper.get_config().get_mode_proxy_remote_ports()[1]);
 }
 
-void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_mode_proxy_local_host()
+void TestConfiguration::test_load_cmd_mode_proxy_local_host()
 {
     std::string param("mode.proxy.local_host");
     std::string cmd_param("--"); cmd_param += param;
@@ -1013,7 +1010,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_m
     CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_mode_proxy_local_hosts()[0]);
 }
 
-void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_local_host()
+void TestConfiguration::test_load_cfg_mode_proxy_local_host()
 {
     std::string param("mode.proxy.local_host");
     std::string filename("./tbc_mode_proxy_local_host.cfg");
@@ -1032,7 +1029,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_m
     CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_mode_proxy_local_hosts()[0]);
 }
 
-void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_local_host_multiple()
+void TestConfiguration::test_load_cfg_mode_proxy_local_host_multiple()
 {
     std::string param("mode.proxy.local_host");
     std::string filename("./tbc_mode_proxy_local_host.cfg");
@@ -1053,7 +1050,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_m
     CPPUNIT_ASSERT_EQUAL(expected_value_2, helper.get_config().get_mode_proxy_local_hosts()[1]);
 }
 
-void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_mode_proxy_remote_host()
+void TestConfiguration::test_load_cmd_mode_proxy_remote_host()
 {
     std::string param("mode.proxy.remote_host");
     std::string cmd_param("--"); cmd_param += param;
@@ -1073,7 +1070,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cmd_m
     CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_mode_proxy_remote_hosts()[0]);
 }
 
-void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_remote_host()
+void TestConfiguration::test_load_cfg_mode_proxy_remote_host()
 {
     std::string param("mode.proxy.remote_host");
     std::string filename("./tbc_mode_proxy_remote_host.cfg");
@@ -1092,7 +1089,7 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_m
     CPPUNIT_ASSERT_EQUAL(expected_value, helper.get_config().get_mode_proxy_remote_hosts()[0]);
 }
 
-void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_mode_proxy_remote_host_multiple()
+void TestConfiguration::test_load_cfg_mode_proxy_remote_host_multiple()
 {
     std::string param("mode.proxy.remote_host");
     std::string filename("./tbc_mode_proxy_remote_host.cfg");
@@ -1111,26 +1108,4 @@ void TestConfiguration::test_ConfigurationBuilder_build_configuration_load_cfg_m
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
     CPPUNIT_ASSERT_EQUAL(expected_value_1, helper.get_config().get_mode_proxy_remote_hosts()[0]);
     CPPUNIT_ASSERT_EQUAL(expected_value_2, helper.get_config().get_mode_proxy_remote_hosts()[1]);
-}
-
-CPPUNIT_TEST_SUITE_REGISTRATION(TestConfiguration);
-
-int main(int argc, char* argv[])
-{
-    CPPUNIT_NS::TestResult controller;
-
-    CPPUNIT_NS::TestResultCollector result;
-    controller.addListener(&result);
-
-    CPPUNIT_NS::BriefTestProgressListener progress;
-    controller.addListener(&progress);
-
-    CPPUNIT_NS::TextUi::TestRunner runner;
-    runner.addTest(CPPUNIT_NS::TestFactoryRegistry::getRegistry().makeTest());
-    runner.run(controller);
-
-    CPPUNIT_NS::CompilerOutputter outputter(&result, std::cerr);
-    outputter.write();
-
-    return result.wasSuccessful() ? 0 : 1;
 }
