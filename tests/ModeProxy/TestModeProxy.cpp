@@ -27,10 +27,15 @@
  * @desc ModeProxy application mode tests.
  */
 
+#include <chrono>
+#include <thread>
 #include <memory>
 #include <vector>
 
+#define WIN32_LEAN_AND_MEAN
+
 #include <boost/filesystem.hpp>
+#include <boost/process/all.hpp>
 
 #include <Mode/Mode.hpp>
 #include <Logger/Logger.hpp>
@@ -39,6 +44,12 @@
 #include <Configuration/ConfigurationBuilder.hpp>
 
 #include "TestModeProxy.hpp"
+
+#ifdef WIN32
+const std::string PORT_BLOCKER_APP = "./mct_port_blocker.exe";
+#else
+const std::string PORT_BLOCKER_APP = "./mct_port_blocker";
+#endif
 
 void TestModeProxy::setUp()
 {
@@ -91,6 +102,17 @@ private:
 
 void TestModeProxy::test_modeproxy_error_local_port_already_bound()
 {
+	std::cout << std::endl;
+    // Start port blocker process
+    std::vector<std::string> args;
+    args.push_back("1717");
+    boost::process::child port_blocker = boost::process::create_child(PORT_BLOCKER_APP.c_str(), args);
+    std::shared_ptr<boost::process::child> guard_port_blocker(&port_blocker, [&](boost::process::child* ch) {
+        ch->terminate();
+    });
+
+	std::this_thread::sleep_for(std::chrono::seconds(3));
+
     std::string filename("./tmp_modeproxy_error_local_port_already_bound.cfg");
     bool expected_value = true;
     std::string expected_message("Mattsource's Connection Tunneler v. 0.1.0-dev");
@@ -103,12 +125,12 @@ void TestModeProxy::test_modeproxy_error_local_port_already_bound()
     ConfigFileReaderHelper helper(filename, 
         { 
             "log.nofile = 1",
-            //"log.silent = 1",
+            "log.silent = 1",
             "mode = proxy",
-            "mode.proxy.local_port = 0",
-            "mode.proxy.local_host = 0",
-            "mode.proxy.remote_port = 0",
-            "mode.proxy.remote_host = 0"
+            "mode.proxy.local_port = 1717",
+            "mode.proxy.local_host = 127.0.0.1",
+            "mode.proxy.remote_port = 80",
+            "mode.proxy.remote_host = 127.0.0.1"
         }, 
     argc, argv);
 
@@ -116,39 +138,27 @@ void TestModeProxy::test_modeproxy_error_local_port_already_bound()
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
 
     message_to_user.clear();
-	expected_message.clear();
+    expected_message.clear();
 
-	{
-		mct::Logger logger(helper.get_config());
-		CPPUNIT_ASSERT_EQUAL(expected_return_value, logger.initialize(message_to_user));
-		CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
+    {
+        mct::Logger logger(helper.get_config());
+        CPPUNIT_ASSERT_EQUAL(expected_return_value, logger.initialize(message_to_user));
+        CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
 
-		mct::ModeFactory mode_factory(helper.get_config(), logger);
-		std::unique_ptr<mct::Mode> app_mode(mode_factory.create(helper.get_config().get_app_mode()));
+        mct::ModeFactory mode_factory(helper.get_config(), logger);
+        std::unique_ptr<mct::Mode> app_mode(mode_factory.create(helper.get_config().get_app_mode()));
 
-		CPPUNIT_ASSERT_EQUAL(false, !app_mode);
-		CPPUNIT_ASSERT_EQUAL(std::string("proxy"), app_mode->get_name());
+        CPPUNIT_ASSERT_EQUAL(false, !app_mode);
+        CPPUNIT_ASSERT_EQUAL(std::string("proxy"), app_mode->get_name());
 
-		expected_message = "Local port already bound!";
+        bool app_result = false;
 
-		/*std::streambuf* prevstr = std::clog.rdbuf();
-		std::ostringstream sStr;
-		std::clog.rdbuf(sStr.rdbuf());*/
+        try {
+            app_result = app_mode->run();
+        } catch (const std::exception& e) {
+            CPPUNIT_ASSERT_EQUAL(true, std::string(e.what()).find("System message: bind") != std::string::npos);
+        }
 
-		bool app_result = false;
-
-		try {
-			app_result = app_mode->run();
-		}
-		catch (const std::exception& e) {
-			//std::clog.rdbuf(prevstr);
-			std::cerr << "Error: " << e.what() /*<< ". Log: " << sStr.str() */ << std::endl;
-			return;
-		}
-
-		//std::clog.rdbuf(prevstr);
-
-		CPPUNIT_ASSERT_EQUAL(false, app_result);
-		//CPPUNIT_ASSERT_EQUAL(true, sStr.str().find(expected_message) != std::string::npos);
-	}
+        CPPUNIT_ASSERT_EQUAL(false, app_result);
+    }
 }

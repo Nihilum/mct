@@ -29,6 +29,7 @@
 
 
 #include <memory>
+#include <sstream>
 #include <cstdlib>
 #include <cstddef>
 #include <algorithm>
@@ -130,7 +131,15 @@ bool ModeProxy::run()
             // local_interface = resolver.resolve(local_interface);
             // remote_host = resolver.resolve(remote_host);
 
-            manager.add_listener(std::make_shared<ProxyListener>(ios, m_log, local_interface, local_port, remote_host, remote_port));
+            try {
+                manager.add_listener(std::make_shared<ProxyListener>(ios, m_log, local_interface, local_port, remote_host, remote_port));
+            } catch (const boost::system::system_error& e) {
+                std::stringstream sStr;
+                sStr << "Cannot start listener using given address and port: " << local_interface << ":" << local_port << std::endl;
+                sStr << "Error code: " << e.code().value() << std::endl;
+                sStr << "System message: " << e.what() << std::endl;
+                throw std::runtime_error(sStr.str());
+            }
         }
     }
 

@@ -47,7 +47,16 @@ void PortBlocker::block_port(const uint16_t port)
 void PortBlocker::run_acceptor(const uint16_t port)
 {
 	try {
-		tcp::acceptor acceptor(m_ios, tcp::endpoint(tcp::v4(), port));
+		tcp::acceptor acceptor(m_ios, tcp::endpoint(boost::asio::ip::address::from_string("127.0.0.1"), port), false);
+
+/*#ifdef WIN32
+		int iOptval = 1;
+		int iResult = setsockopt(acceptor.native(), SOL_SOCKET, SO_EXCLUSIVEADDRUSE, (char *)&iOptval, sizeof (iOptval));
+		if (iResult == SOCKET_ERROR) {
+		std::cout << "setsockopt for SO_EXCLUSIVEADDRUSE failed with error: " << WSAGetLastError() << std::endl;
+		exit(0);
+		}
+#endif*/
 
 		for (;;) {
     		tcp::socket socket(m_ios);
