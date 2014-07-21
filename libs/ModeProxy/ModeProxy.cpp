@@ -38,6 +38,7 @@
 #include <Configuration/Configuration.hpp>
 
 #include <Asio/io_service.hpp>
+#include <Asio/ip/tcp.hpp>
 #include <ModeProxy/ModeProxy.hpp>
 #include <ModeProxy/ProxyManager.hpp>
 #include <ModeProxy/ProxyListener.hpp>
@@ -117,10 +118,10 @@ bool ModeProxy::run()
     boost::asio::io_service ios;
 
     ProxyManager manager(m_log);
-
-    const uint16_t num_of_all_proxies = get_num_of_all_proxies();
     {
-        //HostResolver resolver(m_log);
+        boost::asio::ip::tcp::resolver resolver(ios);
+
+        const uint16_t num_of_all_proxies = get_num_of_all_proxies();
 
         for (uint16_t proxy_num = 0; proxy_num < num_of_all_proxies; ++proxy_num) {
             std::string local_interface = m_config.get_mode_proxy_local_hosts()[proxy_num];
@@ -128,14 +129,25 @@ bool ModeProxy::run()
             std::string remote_host = m_config.get_mode_proxy_remote_hosts()[proxy_num];
             uint16_t remote_port = m_config.get_mode_proxy_remote_ports()[proxy_num];
 
-            // local_interface = resolver.resolve(local_interface);
-            // remote_host = resolver.resolve(remote_host);
+            boost::asio::ip::tcp::resolver::query query_local(local_interface, "");
+            auto i = resolver.resolve(query_local);
+            boost::asio::ip::tcp::endpoint iend = *i;
+            std::string local_ip = iend.address().to_string();
+
+            m_log.debug("Resolved local_ip: %s from local_interface: %s.", local_ip.c_str(), local_interface.c_str());
+
+            boost::asio::ip::tcp::resolver::query query_remote(remote_host, "");
+            i = resolver.resolve(query_remote);
+            boost::asio::ip::tcp::endpoint jend = *i;
+            std::string remote_ip = jend.address().to_string();
+
+            m_log.debug("Resolved remote_ip: %s from remote_host: %s.", remote_ip.c_str(), remote_host.c_str());
 
             try {
-                manager.add_listener(std::make_shared<ProxyListener>(ios, m_log, local_interface, local_port, remote_host, remote_port));
+                manager.add_listener(std::make_shared<ProxyListener>(ios, m_log, local_ip, local_port, remote_ip, remote_port));
             } catch (const boost::system::system_error& e) {
                 std::stringstream sStr;
-                sStr << "Cannot start listener using given address and port: " << local_interface << ":" << local_port << std::endl;
+                sStr << "Cannot start listener using given address and port: (" << local_interface << ") " << local_ip << ":" << local_port << std::endl;
                 sStr << "Error code: " << e.code().value() << std::endl;
                 sStr << "System message: " << e.what() << std::endl;
                 throw std::runtime_error(sStr.str());
