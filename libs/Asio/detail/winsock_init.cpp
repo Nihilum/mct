@@ -30,6 +30,8 @@
 
 #include <Asio/detail/winsock_init.hpp>
 
+#ifdef WIN32
+
 namespace boost {
 namespace asio {
 namespace detail {
@@ -39,3 +41,6 @@ static const winsock_init<>& winsock_init_instance = winsock_init<>(false);
 }
 }
 }
+
+#endif
+

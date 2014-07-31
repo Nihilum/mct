@@ -60,7 +60,7 @@ add_executable(${UTIL_NAME} ${UTIL_SRCS})
 if(WIN32)
 	target_link_libraries(${UTIL_NAME} mctasio)
 else()
-	target_link_libraries(${UTIL_NAME} mctasio)
+	target_link_libraries(${UTIL_NAME} mctasio boost_system)
 endif()
 
 set_target_properties(${UTIL_NAME} PROPERTIES COMPILE_FLAGS

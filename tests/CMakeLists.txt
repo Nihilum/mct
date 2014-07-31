@@ -62,7 +62,7 @@ add_executable(${TEST_NAME} ${TEST_SRCS})
 if(WIN32)
 	target_link_libraries(${TEST_NAME} moccpp ${INTERNAL_LIBS} ${CPPUNIT_LIBRARY} moctest)
 else()
-	target_link_libraries(${TEST_NAME} moccpp ${INTERNAL_LIBS} ${CPPUNIT_LIBRARY} moctest boost_log)
+	target_link_libraries(${TEST_NAME} moccpp ${INTERNAL_LIBS} ${CPPUNIT_LIBRARY} moctest boost_log boost_filesystem boost_system boost_regex)
 endif()
 
 set_target_properties(${TEST_NAME} PROPERTIES COMPILE_FLAGS

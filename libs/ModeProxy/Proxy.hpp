@@ -53,7 +53,7 @@ namespace boost
         template <typename Protocol>
         class stream_socket_service;
 
-        template <typename Protocol, typename StreamSocketService = stream_socket_service<Protocol> >
+        template <typename Protocol, typename StreamSocketService >
         class basic_stream_socket;
     }
 }

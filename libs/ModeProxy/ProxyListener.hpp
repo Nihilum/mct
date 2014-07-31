@@ -54,7 +54,7 @@ namespace boost
         template <typename Protocol>
         class socket_acceptor_service;
 
-		template <typename Protocol, typename SocketAcceptorService = socket_acceptor_service<Protocol> >
+		template <typename Protocol, typename SocketAcceptorService >
 		class basic_socket_acceptor;
     }
 }
@@ -97,7 +97,7 @@ protected:
 
 	bool m_is_dead;
 
-	std::unique_ptr< boost::asio::basic_socket_acceptor<boost::asio::ip::tcp> > m_acceptor;
+	std::unique_ptr< boost::asio::basic_socket_acceptor<boost::asio::ip::tcp, boost::asio::socket_acceptor_service<boost::asio::ip::tcp> > > m_acceptor;
 
 	std::mutex m_sessions_access;
 	std::vector< std::shared_ptr< Proxy > > m_sessions;
