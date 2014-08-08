@@ -30,6 +30,7 @@
 #include <vector>
 #include <sstream>
 
+#include <boost/log/core/core.hpp>
 #include <boost/filesystem.hpp>
 
 #include <Application/Application.hpp>
@@ -66,6 +67,11 @@ void TestApplication::setUp()
 
 void TestApplication::tearDown()
 {
+    boost::log::core::get()->reset_filter();
+    boost::log::core::get()->remove_all_sinks();
+    boost::log::core::get()->get_global_attributes().clear();
+    boost::log::core::get()->get_thread_attributes().clear();
+    boost::filesystem::remove_all("logs/");
 }
 
 void TestApplication::test_init_configuration_failed()

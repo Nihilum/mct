@@ -36,6 +36,9 @@
 
 #include "TestConfiguration.hpp"
 
+namespace testconfig
+{
+
 class ConfigFileReaderHelper
 {
 public:
@@ -101,6 +104,8 @@ private:
     const char** m_argv;
 };
 
+}
+
 void TestConfiguration::setUp()
 {
 }
@@ -140,7 +145,11 @@ void TestConfiguration::test_false()
     std::string error_msg;
 
     CPPUNIT_ASSERT_EQUAL(expected_return_value, config_builder.build_configuration(error_msg));
+#ifdef WIN32
     CPPUNIT_ASSERT_EQUAL(std::string("Could not open 'mct.cfg' file"), error_msg);
+#else
+    CPPUNIT_ASSERT_EQUAL(std::string("Could not open '/etc/mct.cfg' file"), error_msg);
+#endif
 }
 
 void TestConfiguration::test_help()
@@ -152,7 +161,11 @@ void TestConfiguration::test_help()
     mct::ConfigurationBuilder config_builder(config);
     std::string message_to_user;
     std::string expected_message("Mattsource's Connection Tunneler v. 0.1.0-dev\n"
+#ifdef WIN32
                                 "Program will try to read 'mct.cfg' configuration file.\n"
+#else
+                                "Program will try to read '/etc/mct.cfg' configuration file.\n"
+#endif
                                 "If it's not found, program will be stopped.\n"
                                 "You can use '-c' flag to point to another file.\n\n"
 
@@ -338,7 +351,11 @@ void TestConfiguration::test_show_options()
         "-v [ --version ]: ON\n"
         "-h [ --help ]: OFF\n"
         "-g [ --generate ]: OFF\n"
+#ifdef WIN32
         "-c [ --config ]: mct.cfg\n"
+#else
+        "-c [ --config ]: /etc/mct.cfg\n"
+#endif
         "--mode: proxy\n"
         "--log.silent: 0\n"
         "--log.nofile: 0\n"
@@ -376,7 +393,7 @@ void TestConfiguration::test_load_cmd_mode()
     const int argc = 5;
     const char* argv[argc] = { "mct", "-c", filename.c_str(), cmd_param.c_str(), expected_mode.c_str() };
 
-    ConfigFileReaderHelper helper(filename, param, argc, argv);
+    testconfig::ConfigFileReaderHelper helper(filename, param, argc, argv);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("proxy", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
@@ -395,7 +412,7 @@ void TestConfiguration::test_load_cfg_mode()
     const int argc = 3;
     const char* argv[argc] = { "mct", "-c", filename.c_str() };
 
-    ConfigFileReaderHelper helper(filename, param, argc, argv);
+    testconfig::ConfigFileReaderHelper helper(filename, param, argc, argv);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("proxy", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
@@ -415,7 +432,7 @@ void TestConfiguration::test_load_cmd_log_silent()
     const int argc = 5;
     const char* argv[argc] = { "mct", "-c", filename.c_str(), cmd_param.c_str(), "true" };
 
-    ConfigFileReaderHelper helper(filename, param, argc, argv);
+    testconfig::ConfigFileReaderHelper helper(filename, param, argc, argv);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("false", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
@@ -434,7 +451,7 @@ void TestConfiguration::test_load_cfg_log_silent()
     const int argc = 3;
     const char* argv[argc] = { "mct", "-c", filename.c_str() };
 
-    ConfigFileReaderHelper helper(filename, param, argc, argv);
+    testconfig::ConfigFileReaderHelper helper(filename, param, argc, argv);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("true", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
@@ -454,7 +471,7 @@ void TestConfiguration::test_load_cmd_log_nofile()
     const int argc = 5;
     const char* argv[argc] = { "mct", "-c", filename.c_str(), cmd_param.c_str(), "true" };
 
-    ConfigFileReaderHelper helper(filename, param, argc, argv);
+    testconfig::ConfigFileReaderHelper helper(filename, param, argc, argv);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("false", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
@@ -473,7 +490,7 @@ void TestConfiguration::test_load_cfg_log_nofile()
     const int argc = 3;
     const char* argv[argc] = { "mct", "-c", filename.c_str() };
 
-    ConfigFileReaderHelper helper(filename, param, argc, argv);
+    testconfig::ConfigFileReaderHelper helper(filename, param, argc, argv);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("true", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
@@ -493,7 +510,7 @@ void TestConfiguration::test_load_cmd_log_directory()
     const int argc = 5;
     const char* argv[argc] = { "mct", "-c", filename.c_str(), cmd_param.c_str(), "log" };
 
-    ConfigFileReaderHelper helper(filename, param, argc, argv);
+    testconfig::ConfigFileReaderHelper helper(filename, param, argc, argv);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("logs", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
@@ -512,7 +529,7 @@ void TestConfiguration::test_load_cfg_log_directory()
     const int argc = 3;
     const char* argv[argc] = { "mct", "-c", filename.c_str() };
 
-    ConfigFileReaderHelper helper(filename, param, argc, argv);
+    testconfig::ConfigFileReaderHelper helper(filename, param, argc, argv);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("log", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
@@ -532,7 +549,7 @@ void TestConfiguration::test_load_cmd_log_filename()
     const int argc = 5;
     const char* argv[argc] = { "mct", "-c", filename.c_str(), cmd_param.c_str(), "conn.log" };
 
-    ConfigFileReaderHelper helper(filename, param, argc, argv);
+    testconfig::ConfigFileReaderHelper helper(filename, param, argc, argv);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("tunnel.log", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
@@ -551,7 +568,7 @@ void TestConfiguration::test_load_cfg_log_filename()
     const int argc = 3;
     const char* argv[argc] = { "mct", "-c", filename.c_str() };
 
-    ConfigFileReaderHelper helper(filename, param, argc, argv);
+    testconfig::ConfigFileReaderHelper helper(filename, param, argc, argv);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("conn.log", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
@@ -571,7 +588,7 @@ void TestConfiguration::test_load_cmd_log_format()
     const int argc = 5;
     const char* argv[argc] = { "mct", "-c", filename.c_str(), cmd_param.c_str(), "%H:%M" };
 
-    ConfigFileReaderHelper helper(filename, param, argc, argv);
+    testconfig::ConfigFileReaderHelper helper(filename, param, argc, argv);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("%H:%M:%S", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
@@ -590,7 +607,7 @@ void TestConfiguration::test_load_cfg_log_format()
     const int argc = 3;
     const char* argv[argc] = { "mct", "-c", filename.c_str() };
 
-    ConfigFileReaderHelper helper(filename, param, argc, argv);
+    testconfig::ConfigFileReaderHelper helper(filename, param, argc, argv);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("%H:%M", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
@@ -610,7 +627,7 @@ void TestConfiguration::test_load_cmd_log_severity_console()
     const int argc = 5;
     const char* argv[argc] = { "mct", "-c", filename.c_str(), cmd_param.c_str(), "debug" };
 
-    ConfigFileReaderHelper helper(filename, param, argc, argv);
+    testconfig::ConfigFileReaderHelper helper(filename, param, argc, argv);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("warning", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
@@ -629,7 +646,7 @@ void TestConfiguration::test_load_cfg_log_severity_console()
     const int argc = 3;
     const char* argv[argc] = { "mct", "-c", filename.c_str() };
 
-    ConfigFileReaderHelper helper(filename, param, argc, argv);
+    testconfig::ConfigFileReaderHelper helper(filename, param, argc, argv);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("debug", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
@@ -649,7 +666,7 @@ void TestConfiguration::test_load_cmd_log_severity_file()
     const int argc = 5;
     const char* argv[argc] = { "mct", "-c", filename.c_str(), cmd_param.c_str(), "debug" };
 
-    ConfigFileReaderHelper helper(filename, param, argc, argv);
+    testconfig::ConfigFileReaderHelper helper(filename, param, argc, argv);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("warning", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
@@ -668,7 +685,7 @@ void TestConfiguration::test_load_cfg_log_severity_file()
     const int argc = 3;
     const char* argv[argc] = { "mct", "-c", filename.c_str() };
 
-    ConfigFileReaderHelper helper(filename, param, argc, argv);
+    testconfig::ConfigFileReaderHelper helper(filename, param, argc, argv);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("debug", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
@@ -688,7 +705,7 @@ void TestConfiguration::test_load_cmd_log_rotate()
     const int argc = 5;
     const char* argv[argc] = { "mct", "-c", filename.c_str(), cmd_param.c_str(), "true" };
 
-    ConfigFileReaderHelper helper(filename, param, argc, argv);
+    testconfig::ConfigFileReaderHelper helper(filename, param, argc, argv);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("false", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
@@ -707,7 +724,7 @@ void TestConfiguration::test_load_cfg_log_rotate()
     const int argc = 3;
     const char* argv[argc] = { "mct", "-c", filename.c_str() };
 
-    ConfigFileReaderHelper helper(filename, param, argc, argv);
+    testconfig::ConfigFileReaderHelper helper(filename, param, argc, argv);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("true", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
@@ -727,7 +744,7 @@ void TestConfiguration::test_load_cmd_log_rotate_size()
     const int argc = 5;
     const char* argv[argc] = { "mct", "-c", filename.c_str(), cmd_param.c_str(), "1024" };
 
-    ConfigFileReaderHelper helper(filename, param, argc, argv);
+    testconfig::ConfigFileReaderHelper helper(filename, param, argc, argv);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("4096", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
@@ -746,7 +763,7 @@ void TestConfiguration::test_load_cfg_log_rotate_size()
     const int argc = 3;
     const char* argv[argc] = { "mct", "-c", filename.c_str() };
 
-    ConfigFileReaderHelper helper(filename, param, argc, argv);
+    testconfig::ConfigFileReaderHelper helper(filename, param, argc, argv);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("1024", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
@@ -766,7 +783,7 @@ void TestConfiguration::test_load_cmd_log_rotate_filename()
     const int argc = 5;
     const char* argv[argc] = { "mct", "-c", filename.c_str(), cmd_param.c_str(), "%H_%M-mct.log" };
 
-    ConfigFileReaderHelper helper(filename, param, argc, argv);
+    testconfig::ConfigFileReaderHelper helper(filename, param, argc, argv);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("%M-mct.log", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
@@ -785,7 +802,7 @@ void TestConfiguration::test_load_cfg_log_rotate_filename()
     const int argc = 3;
     const char* argv[argc] = { "mct", "-c", filename.c_str() };
 
-    ConfigFileReaderHelper helper(filename, param, argc, argv);
+    testconfig::ConfigFileReaderHelper helper(filename, param, argc, argv);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("%H_%M-mct.log", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
@@ -805,7 +822,7 @@ void TestConfiguration::test_load_cmd_log_rotate_all_files_max_size()
     const int argc = 5;
     const char* argv[argc] = { "mct", "-c", filename.c_str(), cmd_param.c_str(), "1024" };
 
-    ConfigFileReaderHelper helper(filename, param, argc, argv);
+    testconfig::ConfigFileReaderHelper helper(filename, param, argc, argv);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("4096", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
@@ -824,7 +841,7 @@ void TestConfiguration::test_load_cfg_log_rotate_all_files_max_size()
     const int argc = 3;
     const char* argv[argc] = { "mct", "-c", filename.c_str() };
 
-    ConfigFileReaderHelper helper(filename, param, argc, argv);
+    testconfig::ConfigFileReaderHelper helper(filename, param, argc, argv);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("1024", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
@@ -844,7 +861,7 @@ void TestConfiguration::test_load_cmd_log_rotate_min_free_space()
     const int argc = 5;
     const char* argv[argc] = { "mct", "-c", filename.c_str(), cmd_param.c_str(), "1024" };
 
-    ConfigFileReaderHelper helper(filename, param, argc, argv);
+    testconfig::ConfigFileReaderHelper helper(filename, param, argc, argv);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("4096", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
@@ -863,7 +880,7 @@ void TestConfiguration::test_load_cfg_log_rotate_min_free_space()
     const int argc = 3;
     const char* argv[argc] = { "mct", "-c", filename.c_str() };
 
-    ConfigFileReaderHelper helper(filename, param, argc, argv);
+    testconfig::ConfigFileReaderHelper helper(filename, param, argc, argv);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("1024", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
@@ -883,7 +900,7 @@ void TestConfiguration::test_load_cmd_mode_proxy_local_port()
     const int argc = 5;
     const char* argv[argc] = { "mct", "-c", filename.c_str(), cmd_param.c_str(), "6513" };
 
-    ConfigFileReaderHelper helper(filename, param, argc, argv);
+    testconfig::ConfigFileReaderHelper helper(filename, param, argc, argv);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("7543", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
@@ -902,7 +919,7 @@ void TestConfiguration::test_load_cfg_mode_proxy_local_port()
     const int argc = 3;
     const char* argv[argc] = { "mct", "-c", filename.c_str() };
 
-    ConfigFileReaderHelper helper(filename, param, argc, argv);
+    testconfig::ConfigFileReaderHelper helper(filename, param, argc, argv);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("6513", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
@@ -922,7 +939,7 @@ void TestConfiguration::test_load_cfg_mode_proxy_local_port_multiple()
     const int argc = 3;
     const char* argv[argc] = { "mct", "-c", filename.c_str() };
 
-    ConfigFileReaderHelper helper(filename, param, argc, argv);
+    testconfig::ConfigFileReaderHelper helper(filename, param, argc, argv);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("6513 6514", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
@@ -943,7 +960,7 @@ void TestConfiguration::test_load_cmd_mode_proxy_remote_port()
     const int argc = 5;
     const char* argv[argc] = { "mct", "-c", filename.c_str(), cmd_param.c_str(), "6513" };
 
-    ConfigFileReaderHelper helper(filename, param, argc, argv);
+    testconfig::ConfigFileReaderHelper helper(filename, param, argc, argv);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("7543", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
@@ -962,7 +979,7 @@ void TestConfiguration::test_load_cfg_mode_proxy_remote_port()
     const int argc = 3;
     const char* argv[argc] = { "mct", "-c", filename.c_str() };
 
-    ConfigFileReaderHelper helper(filename, param, argc, argv);
+    testconfig::ConfigFileReaderHelper helper(filename, param, argc, argv);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("6513", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
@@ -982,7 +999,7 @@ void TestConfiguration::test_load_cfg_mode_proxy_remote_port_multiple()
     const int argc = 3;
     const char* argv[argc] = { "mct", "-c", filename.c_str() };
 
-    ConfigFileReaderHelper helper(filename, param, argc, argv);
+    testconfig::ConfigFileReaderHelper helper(filename, param, argc, argv);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("6513 6514", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
@@ -1003,7 +1020,7 @@ void TestConfiguration::test_load_cmd_mode_proxy_local_host()
     const int argc = 5;
     const char* argv[argc] = { "mct", "-c", filename.c_str(), cmd_param.c_str(), "127.0.0.1" };
 
-    ConfigFileReaderHelper helper(filename, param, argc, argv);
+    testconfig::ConfigFileReaderHelper helper(filename, param, argc, argv);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("localhost", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
@@ -1022,7 +1039,7 @@ void TestConfiguration::test_load_cfg_mode_proxy_local_host()
     const int argc = 3;
     const char* argv[argc] = { "mct", "-c", filename.c_str() };
 
-    ConfigFileReaderHelper helper(filename, param, argc, argv);
+    testconfig::ConfigFileReaderHelper helper(filename, param, argc, argv);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("127.0.0.1", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
@@ -1042,7 +1059,7 @@ void TestConfiguration::test_load_cfg_mode_proxy_local_host_multiple()
     const int argc = 3;
     const char* argv[argc] = { "mct", "-c", filename.c_str() };
 
-    ConfigFileReaderHelper helper(filename, param, argc, argv);
+    testconfig::ConfigFileReaderHelper helper(filename, param, argc, argv);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("127.0.0.1 0.0.0.0", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
@@ -1063,7 +1080,7 @@ void TestConfiguration::test_load_cmd_mode_proxy_remote_host()
     const int argc = 5;
     const char* argv[argc] = { "mct", "-c", filename.c_str(), cmd_param.c_str(), "127.0.0.1" };
 
-    ConfigFileReaderHelper helper(filename, param, argc, argv);
+    testconfig::ConfigFileReaderHelper helper(filename, param, argc, argv);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("localhost", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
@@ -1082,7 +1099,7 @@ void TestConfiguration::test_load_cfg_mode_proxy_remote_host()
     const int argc = 3;
     const char* argv[argc] = { "mct", "-c", filename.c_str() };
 
-    ConfigFileReaderHelper helper(filename, param, argc, argv);
+    testconfig::ConfigFileReaderHelper helper(filename, param, argc, argv);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("127.0.0.1", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
@@ -1102,7 +1119,7 @@ void TestConfiguration::test_load_cfg_mode_proxy_remote_host_multiple()
     const int argc = 3;
     const char* argv[argc] = { "mct", "-c", filename.c_str() };
 
-    ConfigFileReaderHelper helper(filename, param, argc, argv);
+    testconfig::ConfigFileReaderHelper helper(filename, param, argc, argv);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file("127.0.0.1 0.0.0.0", message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);

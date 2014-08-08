@@ -124,7 +124,7 @@ void TestModeProxy::test_modeproxy_error_local_port_already_bound()
 
     ConfigFileReaderHelper helper(filename, 
         { 
-            "log.nofile = 1",
+            "log.nofile = 0",
             "log.silent = 1",
             "mode = proxy",
             "mode.proxy.local_port = 1717",
