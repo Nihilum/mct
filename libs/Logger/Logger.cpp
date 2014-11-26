@@ -38,7 +38,7 @@
 #include <boost/log/sources/logger.hpp>
 #include <boost/log/sinks.hpp>
 #include <boost/log/support/date_time.hpp>
-#include <boost/utility/empty_deleter.hpp>
+#include <boost/core/null_deleter.hpp>
 
 #include <moccpp/System/cstdio.hpp>
 
@@ -253,7 +253,7 @@ bool LoggerImpl::initialize(std::string& msg)
 
     	typedef sinks::synchronous_sink< sinks::text_ostream_backend > text_sink;
     	boost::shared_ptr< text_sink > console_sink(new text_sink);
-    	boost::shared_ptr< std::ostream > log_stream(&std::clog, boost::empty_deleter());
+    	boost::shared_ptr< std::ostream > log_stream(&std::clog, boost::null_deleter());
     	console_sink->locked_backend()->add_stream(log_stream);
 
     	formatting_setup(console_sink, m_config.get_log_format(), m_config.get_log_severity_console());

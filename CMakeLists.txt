@@ -50,7 +50,7 @@ message(
   "  CPPUNIT_INCLUDES (optional): Path where CPPUNIT Library includes can be found\n"
   "  CPPUNIT_LIBRARY (optional): Path where CPPUNIT Library static can be found\n"
   "  BOOST_PATH: (optional) Path to boost installation\n"
-  "  BOOST_VERSION: (optional) Used boost version (for example 1.55.0)\n\n"
+  "  BOOST_VERSION: (optional) Used boost version (for example 1.57.0)\n\n"
   "To set an option simply type -D<OPTION>=<VALUE> after 'cmake <srcs>'.\n"
   "For example: cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local/mct -DBOOST_PATH=C:\\Boost -DCMAKE_BUILD_TYPE=Release\n\n"
 )
@@ -66,7 +66,7 @@ endif()
 option(CPPUNIT_INCLUDES "Path where CPPUNIT Library includes can be found" 0)
 option(CPPUNIT_LIBRARY "Path where CPPUNIT Library static can be found" 0)
 option(BOOST_PATH "Path to boost installation" 0)
-option(BOOST_VERSION "Used boost version (for example 1.55.0)" 0)
+option(BOOST_VERSION "Used boost version (for example 1.57.0)" 0)
 
 message(STATUS "Looking for Boost...")
 MSource_FindBoost(${BOOST_PATH} ${BOOST_VERSION})

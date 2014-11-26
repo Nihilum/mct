@@ -31,7 +31,7 @@ function(MSource_FindBoost MSOURCE_OUTVAR_1 MSOURCE_OUTVAR_2)
   endif()
 
   if (${MSOURCE_OUTVAR_2} STREQUAL "OFF")
-    set(MSOURCE_OUTVAR_2 1.55.0)
+    set(MSOURCE_OUTVAR_2 1.57.0)
   endif()
 
   find_package(Boost ${MSOURCE_OUTVAR_2})
