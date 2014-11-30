@@ -37,8 +37,8 @@
 #include <Logger/Logger.hpp>
 #include <Configuration/Configuration.hpp>
 
-#include <Asio/io_service.hpp>
-#include <Asio/ip/tcp.hpp>
+#include <boost/asio/io_service.hpp>
+#include <boost/asio/ip/tcp.hpp>
 #include <ModeProxy/ModeProxy.hpp>
 #include <ModeProxy/ProxyManager.hpp>
 #include <ModeProxy/ProxyListener.hpp>
