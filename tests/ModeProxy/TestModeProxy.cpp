@@ -106,12 +106,17 @@ void TestModeProxy::test_modeproxy_error_local_port_already_bound()
     // Start port blocker process
     std::vector<std::string> args;
     args.push_back("1717");
+    std::cout << "DEBBIE: starting child process" << std::endl;
     boost::process::child port_blocker = boost::process::create_child(PORT_BLOCKER_APP.c_str(), args);
     std::shared_ptr<boost::process::child> guard_port_blocker(&port_blocker, [&](boost::process::child* ch) {
         ch->terminate();
     });
+    std::cout << "DEBBIE: child process started" << std::endl;
+    std::cout << "DEBBIE: sleeping for 3 seconds" << std::endl;
 
 	std::this_thread::sleep_for(std::chrono::seconds(3));
+
+    std::cout << "DEBBIE: waking up after 3 seconds" << std::endl;
 
     std::string filename("./tmp_modeproxy_error_local_port_already_bound.cfg");
     bool expected_value = true;
@@ -119,13 +124,15 @@ void TestModeProxy::test_modeproxy_error_local_port_already_bound()
     std::string message_to_user;
     const bool expected_return_value = true;
 
+    std::cout << "DEBBIE: init stuff done" << std::endl;
+
     const int argc = 3;
     const char* argv[argc] = { "mct", "-c", filename.c_str()};
 
     ConfigFileReaderHelper helper(filename, 
         { 
             "log.nofile = 0",
-            "log.silent = 1",
+            "log.silent = 0",
             "mode = proxy",
             "mode.proxy.local_port = 1717",
             "mode.proxy.local_host = 127.0.0.1",
@@ -133,6 +140,8 @@ void TestModeProxy::test_modeproxy_error_local_port_already_bound()
             "mode.proxy.remote_host = 127.0.0.1"
         }, 
     argc, argv);
+
+    std::cout << "DEBBIE: knock knock and so forth" << std::endl;
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file(message_to_user));
     CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);

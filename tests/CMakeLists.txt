@@ -49,7 +49,7 @@ endif()
 
 SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
 SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE) 
-SET(CMAKE_INSTALL_RPATH "\$ORIGIN")
+SET(CMAKE_INSTALL_RPATH "\$ORIGIN:\$ORIGIN/../lib")
 SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 if(NOT DEFINED WIN32)
@@ -62,7 +62,7 @@ add_executable(${TEST_NAME} ${TEST_SRCS})
 if(WIN32)
 	target_link_libraries(${TEST_NAME} moccpp ${INTERNAL_LIBS} ${CPPUNIT_LIBRARY} moctest)
 else()
-	target_link_libraries(${TEST_NAME} moccpp ${INTERNAL_LIBS} ${CPPUNIT_LIBRARY} moctest boost_log boost_filesystem boost_system boost_regex)
+	target_link_libraries(${TEST_NAME} moccpp ${INTERNAL_LIBS} ${CPPUNIT_LIBRARY} moctest boost_log boost_filesystem boost_system boost_regex boost_thread boost_program_options)
 endif()
 
 set_target_properties(${TEST_NAME} PROPERTIES COMPILE_FLAGS
