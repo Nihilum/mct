@@ -77,4 +77,4 @@ set_target_properties(${LIBRARY_NAME} PROPERTIES COMPILE_FLAGS
   "${LIBRARY_COMPILE_FLAGS}"
 )
 
-target_link_libraries(${LIBRARY_NAME} moccpp mctconfig mctlog mctmode mctasio)
+target_link_libraries(${LIBRARY_NAME} moccpp mctconfig mctlog mctmode)

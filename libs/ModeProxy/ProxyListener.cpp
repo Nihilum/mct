@@ -31,8 +31,8 @@
 
 #include <functional>
 
-#include <Asio/basic_socket_acceptor.hpp>
-#include <Asio/ip/tcp.hpp>
+#include <boost/asio/basic_socket_acceptor.hpp>
+#include <boost/asio/ip/tcp.hpp>
 
 #include <Logger/Logger.hpp>
 #include <ModeProxy/Proxy.hpp>
@@ -45,6 +45,7 @@ ProxyListener::ProxyListener(boost::asio::io_service& ios, Logger& logger, const
 : m_ios(ios), m_log(logger), m_listen_host(listen_host), m_listen_port(listen_port), m_remote_host(remote_host), m_remote_port(remote_port), m_is_dead(false),
   m_acceptor(new boost::asio::ip::tcp::acceptor(m_ios, boost::asio::ip::tcp::endpoint(boost::asio::ip::address::from_string(m_listen_host), m_listen_port)))
 {
+	m_log.debug("Creating listener %s:%u.", m_listen_host.c_str(), m_listen_port);
 }
 
 ProxyListener::~ProxyListener()
