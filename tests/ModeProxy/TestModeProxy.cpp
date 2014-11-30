@@ -42,6 +42,7 @@
 #include <ModeFactory/ModeFactory.hpp>
 #include <Configuration/Configuration.hpp>
 #include <Configuration/ConfigurationBuilder.hpp>
+#include <ModeProxy/IPResolver.hpp>
 
 #include "TestModeProxy.hpp"
 
@@ -102,7 +103,7 @@ private:
 
 void TestModeProxy::test_modeproxy_error_local_port_already_bound()
 {
-	std::cout << std::endl;
+    std::cout << std::endl;
     // Start port blocker process
     std::vector<std::string> args;
     args.push_back("1717");
@@ -111,7 +112,7 @@ void TestModeProxy::test_modeproxy_error_local_port_already_bound()
         ch->terminate();
     });
 
-	std::this_thread::sleep_for(std::chrono::seconds(3));
+    std::this_thread::sleep_for(std::chrono::seconds(3));
 
     std::string filename("./tmp_modeproxy_error_local_port_already_bound.cfg");
     bool expected_value = true;
@@ -124,8 +125,8 @@ void TestModeProxy::test_modeproxy_error_local_port_already_bound()
 
     ConfigFileReaderHelper helper(filename, 
         { 
-            "log.nofile = 0",
-            "log.silent = 0",
+            "log.nofile = 1",
+            "log.silent = 1",
             "mode = proxy",
             "mode.proxy.local_port = 1717",
             "mode.proxy.local_host = 127.0.0.1",
@@ -160,5 +161,55 @@ void TestModeProxy::test_modeproxy_error_local_port_already_bound()
         }
 
         CPPUNIT_ASSERT_EQUAL(false, app_result);
+    }
+}
+
+void TestModeProxy::test_ipresolver_localhost()
+{
+    std::string filename("./tmp_modeproxy_ipresolver_localhost.cfg");
+    bool expected_value = true;
+    std::string expected_message("Mattsource's Connection Tunneler v. 0.1.0-dev");
+    std::string message_to_user;
+    const bool expected_return_value = true;
+
+    const int argc = 3;
+    const char* argv[argc] = { "mct", "-c", filename.c_str()};
+
+    ConfigFileReaderHelper helper(filename, 
+        { 
+            "log.nofile = 1",
+            "log.silent = 1"
+        },
+    argc, argv);
+
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, expected_return_value, helper.read_file(message_to_user));
+    CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
+
+    message_to_user.clear();
+    expected_message.clear();
+
+    {
+        mct::Logger logger(helper.get_config());
+        CPPUNIT_ASSERT_EQUAL(expected_return_value, logger.initialize(message_to_user));
+        CPPUNIT_ASSERT_EQUAL(expected_message, message_to_user);
+
+        std::string expected_ip_address_v4("127.0.0.1");
+        std::string expected_ip_address_v6("::1");
+        std::string input_hostname("localhost");
+
+        boost::asio::io_service ios;
+        mct::IPResolver resolver(logger, ios);
+
+        std::string actual_result = resolver.resolve_only_first_ip(input_hostname);
+
+        if (actual_result != expected_ip_address_v6 && actual_result != expected_ip_address_v4) {
+            message_to_user = "Expected either ";
+            message_to_user += expected_ip_address_v6;
+            message_to_user += " or ";
+            message_to_user += expected_ip_address_v4;
+            message_to_user += " but received ";
+            message_to_user += actual_result;
+            CPPUNIT_ASSERT_EQUAL_MESSAGE(message_to_user, false, true);
+        }
     }
 }

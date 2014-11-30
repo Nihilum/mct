@@ -22,30 +22,39 @@
  */
 
 /**
- * @file tests/ModeProxy/TestModeProxy.hpp
+ * @file ModeProxy/IPResolver.hpp
  *
- * @desc ModeProxy application mode tests.
+ * @desc IPResolver can be used to translate a hostname to IP address (using DNS).
  */
 
-#ifndef MCT_TESTS_MODEPROXY_TEST_MODEPROXY_HPP
-#define MCT_TESTS_MODEPROXY_TEST_MODEPROXY_HPP
+#ifndef MCT_MODEPROXY_IPRESOLVER_HPP
+#define MCT_MODEPROXY_IPRESOLVER_HPP
 
-#include <moctest/moctest.hpp>
+#include <string>
 
-class TestModeProxy : public CPPUNIT_NS::TestCase
+#include <ModeProxy/Config.hpp>
+
+namespace mct
 {
-    CPPUNIT_TEST_SUITE(TestModeProxy);
-    CPPUNIT_TEST(test_modeproxy_error_local_port_already_bound);
-    CPPUNIT_TEST(test_ipresolver_localhost);
-    CPPUNIT_TEST_SUITE_END();
 
+class Logger;
+class IPResolverImpl;
+
+class MCT_MODEPROXY_DLL_PUBLIC IPResolver
+{
 public:
-    void setUp();
-    void tearDown();
+    IPResolver(Logger& logger, boost::asio::io_service& ios);
+    ~IPResolver();
 
-protected:
-    void test_modeproxy_error_local_port_already_bound();
-    void test_ipresolver_localhost();
+    IPResolver(const IPResolver&) = delete;
+    IPResolver& operator=(const IPResolver&) = delete;
+
+    std::string resolve_only_first_ip(const std::string& address);
+
+private:
+    IPResolverImpl* m_pImpl;
 };
 
-#endif // MCT_TESTS_MODEPROXY_TEST_MODEPROXY_HPP
+}
+
+#endif // MCT_MODEPROXY_IPRESOLVER_HPP
