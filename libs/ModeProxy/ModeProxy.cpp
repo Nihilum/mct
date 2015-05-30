@@ -31,7 +31,6 @@
 #include <memory>
 #include <sstream>
 #include <cstdlib>
-#include <cstddef>
 #include <algorithm>
 
 #include <Logger/Logger.hpp>
@@ -64,10 +63,10 @@ const std::string& ModeProxy::get_name() const
 bool ModeProxy::validate_configuration() const
 {
     if (m_config.get_mode_proxy_local_hosts().size() != m_config.get_mode_proxy_remote_hosts().size() != m_config.get_mode_proxy_local_ports().size() != m_config.get_mode_proxy_remote_ports().size()) {
-        uint16_t lh = m_config.get_mode_proxy_local_hosts().size();
-        uint16_t rh = m_config.get_mode_proxy_remote_hosts().size();
-        uint16_t lp = m_config.get_mode_proxy_local_ports().size();
-        uint16_t rp = m_config.get_mode_proxy_remote_ports().size();
+        uint16_t lh = (uint16_t)m_config.get_mode_proxy_local_hosts().size();
+        uint16_t rh = (uint16_t)m_config.get_mode_proxy_remote_hosts().size();
+        uint16_t lp = (uint16_t)m_config.get_mode_proxy_local_ports().size();
+        uint16_t rp = (uint16_t)m_config.get_mode_proxy_remote_ports().size();
         uint16_t max = (std::max)({lh, rh, lp, rp});
 
         auto report_conf_problem = [&](const std::string& conf_field, uint16_t expected_val, uint16_t actual_val) {
@@ -104,7 +103,7 @@ bool ModeProxy::validate_configuration() const
 
 uint16_t ModeProxy::get_num_of_all_proxies() const
 {   // since all vectors are equal (checked with validate_configuration()), return the size of the first one
-    return m_config.get_mode_proxy_local_hosts().size();
+    return (uint16_t)m_config.get_mode_proxy_local_hosts().size();
 }
 
 bool ModeProxy::run()
