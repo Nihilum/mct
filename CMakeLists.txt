@@ -49,7 +49,7 @@ set(CPPUNIT_LIBRARY "C:/dev/deps/cppunit_1_13_2_release32/cppunit.lib" CACHE FIL
 set(MOCTEST_LIB "C:/dev/deps/moctest_0_2_0_release32/lib" CACHE FILEPATH "moctest library")
 set(MOCTEST_INCLUDES "C:/dev/deps/moctest_0_2_0_release32/include" CACHE FILEPATH "moctest includes")
 set(BOOST_PATH "C:/dev/deps/boost_1_58_0_release32/" CACHE FILEPATH "boost path")
-#set(BOOST_VERSION "1.58.0" CACHE FILEPATH "boost version")
+set(BOOST_VERSION "1.58.0" CACHE BOOL "boost version")
 
 # Output description of this script
 message(
