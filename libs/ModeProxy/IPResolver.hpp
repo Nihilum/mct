@@ -34,6 +34,14 @@
 
 #include <ModeProxy/Config.hpp>
 
+namespace boost
+{
+    namespace asio
+    {
+        class io_service;
+    }
+}
+
 namespace mct
 {
 

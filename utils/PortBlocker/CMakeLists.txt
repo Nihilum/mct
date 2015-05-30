@@ -37,9 +37,11 @@ add_definitions( -DBOOST_ALL_DYN_LINK )
 add_definitions( -DBOOST_LOG_DYN_LINK )
 add_definitions( -DBOOST_FILESYSTEM_NO_DEPRECATED )
 
-if(WIN32)
+if(WIN32 AND NOT MINGW)
   # Disable dll-external warnings for Visual Studio; [/GS-] disable buffer overflow security checks (optimization)
   set(PROGRAM_COMPILE_FLAGS ${PROGRAM_COMPILE_FLAGS} "/wd4251 /wd4275 /wd4351 /GS- -D_WIN32_WINNT=0x0501 -DBOOST_ASIO_HAS_MOVE")
+elseif(WIN32 AND MINGW)
+  set(PROGRAM_COMPILE_FLAGS ${PROGRAM_COMPILE_FLAGS} "-std=c++11")
 else()
   # Activate C++11 mode for GNU/GCC; set rpath to $ORIGIN so the shared library can be easily found
   set(PROGRAM_COMPILE_FLAGS ${PROGRAM_COMPILE_FLAGS} "-std=c++11")

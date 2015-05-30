@@ -50,9 +50,9 @@ public:
     ModeProxy(const ModeProxy&) = delete;
     ModeProxy& operator=(const ModeProxy&) = delete;
 
-    virtual const std::string& get_name() const;
+    virtual const std::string& get_name() const final;
 
-    virtual bool run();
+    virtual bool run() final;
 
 protected:
     uint16_t get_num_of_all_proxies() const;

@@ -39,6 +39,18 @@ MSource_ForceOutOfSourceBuild()
 MSource_DetermineAddressModel(MSOURCE_ADDRESS_MODEL)
 message(STATUS "Detected ${MSOURCE_ADDRESS_MODEL}-bit address model.")
 
+set(MINGW "TRUE" CACHE FILEPATH "MinGW environment")
+set(CMAKE_INSTALL_PREFIX "C:/dev/mct/build/rtm" CACHE FILEPATH "Installation prefix")
+set(CMAKE_BUILD_TYPE "Release" CACHE FILEPATH "Build type")
+set(MOCCPPLIB_INCLUDES "C:/dev/deps/moccpplib_0_2_0_release32/include/" CACHE FILEPATH "moccpplib includes")
+set(MOCCPPLIB_LIBRARIES "C:/dev/deps/moccpplib_0_2_0_release32/lib" CACHE FILEPATH "moccpplib libraries")
+set(CPPUNIT_INCLUDES "C:/dev/deps/cppunit_1_13_2_release32/" CACHE FILEPATH "cppunit includes")
+set(CPPUNIT_LIBRARY "C:/dev/deps/cppunit_1_13_2_release32/cppunit.lib" CACHE FILEPATH "cppunit library")
+set(MOCTEST_LIB "C:/dev/deps/moctest_0_2_0_release32/lib" CACHE FILEPATH "moctest library")
+set(MOCTEST_INCLUDES "C:/dev/deps/moctest_0_2_0_release32/include" CACHE FILEPATH "moctest includes")
+set(BOOST_PATH "C:/dev/deps/boost_1_58_0_release32/" CACHE FILEPATH "boost path")
+#set(BOOST_VERSION "1.58.0" CACHE FILEPATH "boost version")
+
 # Output description of this script
 message(
   "\n\nThis script builds the mct application.\n"
@@ -120,10 +132,12 @@ add_definitions( ${Boost_LIB_DIAGNOSTIC_DEFINITIONS} )
 add_definitions( -DBOOST_ALL_DYN_LINK )
 add_definitions( -DBOOST_FILESYSTEM_NO_DEPRECATED )
 
-if(WIN32)
+if(WIN32 AND NOT MINGW)
   # Disable dll-external warnings for Visual Studio; [/GS-] disable buffer overflow security checks (optimization);
   # Boost.Asio needs to know windows version [0x0501 - WinXP minimum]
   set(PROGRAM_COMPILE_FLAGS ${PROGRAM_COMPILE_FLAGS} "/wd4251 /GS- -D_WIN32_WINNT=0x0501")
+elseif(WIN32 AND MINGW)
+  set(PROGRAM_COMPILE_FLAGS ${PROGRAM_COMPILE_FLAGS} "-std=c++11 -D_WIN32_WINNT=0x0501")
 else()
   # Activate C++11 mode for GNU/GCC
   set(PROGRAM_COMPILE_FLAGS ${PROGRAM_COMPILE_FLAGS} "-std=c++11")

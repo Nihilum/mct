@@ -21,10 +21,12 @@
 
 set(LIBRARY_NAME mctapp)
 
-if(WIN32)
+if(WIN32 AND NOT MINGW)
   # Disable dll-external warnings for Visual Studio; [/GS-] disable buffer overflow security checks (optimization)
   # Boost.Asio needs to know windows version [0x0501 - WinXP minimum]
   set(LIBRARY_COMPILE_FLAGS ${LIBRARY_COMPILE_FLAGS} "-DMCT_APPLICATION_DLL=1 /wd4251 /wd4275 /GS- -D_WIN32_WINNT=0x0501")
+elseif(WIN32 AND MINGW)
+  set(LIBRARY_COMPILE_FLAGS ${LIBRARY_COMPILE_FLAGS} "-std=c++11 -DMCT_APPLICATION_DLL=1 -D_WIN32_WINNT=0x0501")
 else()
   # Activate C++11 mode for GNU/GCC
   set(LIBRARY_COMPILE_FLAGS ${LIBRARY_COMPILE_FLAGS} "-std=c++11 -DMCT_APPLICATION_DLL=1")
