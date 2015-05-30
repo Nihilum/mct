@@ -39,7 +39,7 @@ MSource_ForceOutOfSourceBuild()
 MSource_DetermineAddressModel(MSOURCE_ADDRESS_MODEL)
 message(STATUS "Detected ${MSOURCE_ADDRESS_MODEL}-bit address model.")
 
-set(MINGW "TRUE" CACHE FILEPATH "MinGW environment")
+set(MINGW "TRUE" CACHE BOOL "MinGW environment")
 set(CMAKE_INSTALL_PREFIX "C:/dev/mct/build/rtm" CACHE FILEPATH "Installation prefix")
 set(CMAKE_BUILD_TYPE "Release" CACHE FILEPATH "Build type")
 set(MOCCPPLIB_INCLUDES "C:/dev/deps/moccpplib_0_2_0_release32/include/" CACHE FILEPATH "moccpplib includes")
